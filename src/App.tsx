@@ -1,11 +1,8 @@
 import React from "react";
+import { LoggedOutrRouter } from "./routers/logged-out-router";
 
 function App() {
-  return (
-    <div className="App bg-black">
-      <h1 className="text-xl text-white">Hello Tailwind</h1>
-    </div>
-  );
+  return <LoggedOutrRouter />;
 }
 
 export default App;

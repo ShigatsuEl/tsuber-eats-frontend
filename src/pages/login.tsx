@@ -3,14 +3,15 @@ import gql from "graphql-tag";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
+import {
+  LoginMutation,
+  LoginMutationVariables,
+} from "../__generated__/LoginMutation";
 
 // 8번째 라인은 오직 프론트엔드를 위한 것이다. 백엔드로 전송되지 않는다.
 const LOGIN_MUTATION = gql`
-  mutaion LoginMutation($email:String!, $password:String!) {
-    login(input: {
-      email: $email,
-      password: $password
-    }) {
+  mutation LoginMutation($email: String!, $password: String!) {
+    login(input: { email: $email, password: $password }) {
       ok
       token
       error
@@ -30,7 +31,8 @@ export const LogIn = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ILoginForm>();
-  const [loginMutaion, { loading, error, data }] = useMutation(LOGIN_MUTATION);
+  const [loginMutaion] =
+    useMutation<LoginMutation, LoginMutationVariables>(LOGIN_MUTATION);
 
   const onValid = () => {
     const { email, password } = getValues();

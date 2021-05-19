@@ -12,7 +12,6 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.7",
-    "apollo": "^2.33.2",
     "autoprefixer": "^10.2.5",
     "graphql": "^15.5.0",
     "postcss": "^8.2.15",
@@ -30,7 +29,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "tailwind:build": "tailwind build ./src/styles/tailwind.css -o ./src/styles/styles.css"
+    "tailwind:build": "tailwind build ./src/styles/tailwind.css -o ./src/styles/styles.css",
+    "apollo:codegen": "npx apollo client:codegen src/__generated__ --target=typescript --outputFlat"
   },
   "eslintConfig": {
     "extends": [

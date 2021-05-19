@@ -7,6 +7,7 @@ import {
   LoginMutation,
   LoginMutationVariables,
 } from "../__generated__/LoginMutation";
+import tsuberLogo from "../images/eats-logo.svg";
 
 // 8번째 라인은 오직 프론트엔드를 위한 것이다. 백엔드로 전송되지 않는다.
 const LOGIN_MUTATION = gql`
@@ -62,10 +63,14 @@ export const LogIn = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-800">
-      <div className="w-full max-w-lg rounded-lg py-10 text-center bg-white">
-        <h3 className="font-bold text-2xl text-gray-800">Tsuber Eats</h3>
-        <form onSubmit={handleSubmit(onValid)} className="grid gap-3 mt-5 px-5">
+    <div className="flex flex-col items-center h-screen mt-8 lg:mt-24">
+      <div className="flex flex-col items-center px-5 w-full max-w-screen-sm">
+        <img src={tsuberLogo} alt="uber-logo" className="w-48 mb-10 lg:mb-16" />
+        <h4 className="self-start mb-10 font-medium text-3xl">Welcome back</h4>
+        <form
+          onSubmit={handleSubmit(onValid)}
+          className="grid gap-3 mt-5 w-full"
+        >
           <input
             {...register("email", { required: "Email is required" })}
             type="email"
@@ -94,9 +99,7 @@ export const LogIn = () => {
           {errors.password?.type === "minLength" && (
             <FormError errorMessage="Password must be more than 10 characters" />
           )}
-          <button className="btn mt-3">
-            {loading ? "Loading..." : "Log In"}
-          </button>
+          <button className="mt-3">{loading ? "Loading..." : "Log In"}</button>
           {loginMutationResult?.login.error && (
             <FormError errorMessage={loginMutationResult.login.error} />
           )}

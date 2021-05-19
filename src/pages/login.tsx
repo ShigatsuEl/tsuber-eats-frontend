@@ -31,7 +31,7 @@ export const LogIn = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ILoginForm>();
-  const [loginMutaion, { data: loginMutationResult }] = useMutation<
+  const [loginMutaion, { data: loginMutationResult, loading }] = useMutation<
     LoginMutation,
     LoginMutationVariables
   >(LOGIN_MUTATION, {
@@ -48,15 +48,17 @@ export const LogIn = () => {
   }
 
   const onValid = () => {
-    const { email, password } = getValues();
-    loginMutaion({
-      variables: {
-        loginInput: {
-          email,
-          password,
+    if (!loading) {
+      const { email, password } = getValues();
+      loginMutaion({
+        variables: {
+          loginInput: {
+            email,
+            password,
+          },
         },
-      },
-    });
+      });
+    }
   };
 
   return (
@@ -92,7 +94,9 @@ export const LogIn = () => {
           {errors.password?.type === "minLength" && (
             <FormError errorMessage="Password must be more than 10 characters" />
           )}
-          <button className="btn mt-3">Log In</button>
+          <button className="btn mt-3">
+            {loading ? "Loading..." : "Log In"}
+          </button>
           {loginMutationResult?.login.error && (
             <FormError errorMessage={loginMutationResult.login.error} />
           )}

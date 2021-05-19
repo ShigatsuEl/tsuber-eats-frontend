@@ -10,8 +10,8 @@ import {
 
 // 8번째 라인은 오직 프론트엔드를 위한 것이다. 백엔드로 전송되지 않는다.
 const LOGIN_MUTATION = gql`
-  mutation LoginMutation($email: String!, $password: String!) {
-    login(input: { email: $email, password: $password }) {
+  mutation LoginMutation($loginInput: LoginInput!) {
+    login(input: $loginInput) {
       ok
       token
       error
@@ -31,15 +31,30 @@ export const LogIn = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ILoginForm>();
-  const [loginMutaion] =
-    useMutation<LoginMutation, LoginMutationVariables>(LOGIN_MUTATION);
+  const [loginMutaion, { data: loginMutationResult }] = useMutation<
+    LoginMutation,
+    LoginMutationVariables
+  >(LOGIN_MUTATION, {
+    onCompleted,
+  });
+
+  function onCompleted(data: LoginMutation) {
+    const {
+      login: { ok, token },
+    } = data;
+    if (ok) {
+      console.log(token);
+    }
+  }
 
   const onValid = () => {
     const { email, password } = getValues();
     loginMutaion({
       variables: {
-        email,
-        password,
+        loginInput: {
+          email,
+          password,
+        },
       },
     });
   };
@@ -78,6 +93,9 @@ export const LogIn = () => {
             <FormError errorMessage="Password must be more than 10 characters" />
           )}
           <button className="btn mt-3">Log In</button>
+          {loginMutationResult?.login.error && (
+            <FormError errorMessage={loginMutationResult.login.error} />
+          )}
         </form>
       </div>
     </div>

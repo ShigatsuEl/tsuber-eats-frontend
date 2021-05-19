@@ -8,6 +8,8 @@ import {
   LoginMutationVariables,
 } from "../__generated__/LoginMutation";
 import tsuberLogo from "../images/eats-logo.svg";
+import { Button } from "../components/button";
+import { Link } from "react-router-dom";
 
 // 8번째 라인은 오직 프론트엔드를 위한 것이다. 백엔드로 전송되지 않는다.
 const LOGIN_MUTATION = gql`
@@ -30,8 +32,10 @@ export const LogIn = () => {
     register,
     getValues,
     handleSubmit,
-    formState: { errors },
-  } = useForm<ILoginForm>();
+    formState: { errors, isValid },
+  } = useForm<ILoginForm>({
+    mode: "onChange",
+  });
   const [loginMutaion, { data: loginMutationResult, loading }] = useMutation<
     LoginMutation,
     LoginMutationVariables
@@ -69,7 +73,7 @@ export const LogIn = () => {
         <h4 className="self-start mb-10 font-medium text-3xl">Welcome back</h4>
         <form
           onSubmit={handleSubmit(onValid)}
-          className="grid gap-3 mt-5 w-full"
+          className="grid gap-3 mt-5 mb-3 w-full"
         >
           <input
             {...register("email", { required: "Email is required" })}
@@ -85,12 +89,11 @@ export const LogIn = () => {
           <input
             {...register("password", {
               required: "Password is required",
-              minLength: 10,
             })}
             type="password"
             name="password"
             placeholder="Password"
-            className="input"
+            className="input mb-3"
             required
           />
           {errors.password?.message && (
@@ -99,11 +102,17 @@ export const LogIn = () => {
           {errors.password?.type === "minLength" && (
             <FormError errorMessage="Password must be more than 10 characters" />
           )}
-          <button className="mt-3">{loading ? "Loading..." : "Log In"}</button>
+          <Button canClick={isValid} loading={loading} actionText="Log In" />
           {loginMutationResult?.login.error && (
             <FormError errorMessage={loginMutationResult.login.error} />
           )}
         </form>
+        <div>
+          New to Tuber?{" "}
+          <Link to="/create-account" className="text-lime-600 hover:underline">
+            Create an account
+          </Link>
+        </div>
       </div>
     </div>
   );

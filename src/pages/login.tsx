@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
+import Helmet from "react-helmet";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import {
@@ -68,6 +69,9 @@ export const LogIn = () => {
 
   return (
     <div className="flex flex-col items-center h-screen mt-8 lg:mt-24">
+      <Helmet>
+        <title>Login | Tsuber Eats</title>
+      </Helmet>
       <div className="flex flex-col items-center px-5 w-full max-w-screen-sm">
         <img src={tsuberLogo} alt="uber-logo" className="w-48 mb-10 lg:mb-16" />
         <h4 className="self-start mb-10 font-medium text-3xl">Welcome back</h4>

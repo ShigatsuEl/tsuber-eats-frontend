@@ -6,8 +6,12 @@ import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import tsuberLogo from "../images/eats-logo.svg";
 import { Button } from "../components/button";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { UserRole } from "../__generated__/globalTypes";
+import {
+  CreateAccountMutation,
+  CreateAccountMutationVariables,
+} from "../__generated__/CreateAccountMutation";
 
 // 8번째 라인은 오직 프론트엔드를 위한 것이다. 백엔드로 전송되지 않는다.
 const CREATE_ACCOUNT_MUTATION = gql`
@@ -29,7 +33,6 @@ export const CreateAccount = () => {
   const {
     register,
     getValues,
-    watch,
     handleSubmit,
     formState: { errors, isValid },
   } = useForm<ICreateAcountForm>({
@@ -38,11 +41,41 @@ export const CreateAccount = () => {
       role: UserRole.Client,
     },
   });
-  const [createAccountMutation] = useMutation(CREATE_ACCOUNT_MUTATION);
+  const [
+    createAccountMutation,
+    { loading, data: createAccountMutationResult },
+  ] = useMutation<CreateAccountMutation, CreateAccountMutationVariables>(
+    CREATE_ACCOUNT_MUTATION,
+    {
+      onCompleted,
+    }
+  );
+  const history = useHistory();
 
-  const onValid = () => {};
-  console.log(watch());
+  function onCompleted(data: CreateAccountMutation) {
+    const {
+      createAccount: { ok },
+    } = data;
+    if (ok) {
+      // redirect
+      history.push("/");
+    }
+  }
 
+  const onValid = () => {
+    const { email, password, role } = getValues();
+    if (!loading) {
+      createAccountMutation({
+        variables: {
+          createAccountInput: {
+            email,
+            password,
+            role,
+          },
+        },
+      });
+    }
+  };
   return (
     <div className="flex flex-col items-center h-screen mt-8 lg:mt-24">
       <Helmet>
@@ -58,7 +91,14 @@ export const CreateAccount = () => {
           className="grid gap-3 mt-5 mb-3 w-full"
         >
           <input
-            {...register("email", { required: "Email is required" })}
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value:
+                  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                message: "Must be entered in email format",
+              },
+            })}
             type="email"
             name="email"
             placeholder="Email"
@@ -95,9 +135,14 @@ export const CreateAccount = () => {
           </select>
           <Button
             canClick={isValid}
-            loading={false}
+            loading={loading}
             actionText="Create Account"
           />
+          {createAccountMutationResult?.createAccount.error && (
+            <FormError
+              errorMessage={createAccountMutationResult.createAccount.error}
+            />
+          )}
         </form>
         <div>
           Already have an account?{" "}

@@ -4,7 +4,6 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
-import tsuberLogo from "../images/eats-logo.svg";
 import { Button } from "../components/button";
 import { Link, useHistory } from "react-router-dom";
 import { UserRole } from "../__generated__/globalTypes";
@@ -19,6 +18,7 @@ import {
 } from "../__generated__/LoginMutation";
 import { authTokenVar, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
+import { Logo, LogoLocation } from "../components/logo";
 
 // 8번째 라인은 오직 프론트엔드를 위한 것이다. 백엔드로 전송되지 않는다.
 const CREATE_ACCOUNT_MUTATION = gql`
@@ -116,7 +116,7 @@ export const CreateAccount = () => {
         <title>Create Account | Tsuber Eats</title>
       </Helmet>
       <div className="flex flex-col items-center px-5 w-full max-w-screen-sm">
-        <img src={tsuberLogo} alt="uber-logo" className="w-48 mb-10 lg:mb-16" />
+        <Logo where={LogoLocation.CreateAccount} />
         <h4 className="self-start mb-10 font-medium text-3xl">
           Let's get started
         </h4>

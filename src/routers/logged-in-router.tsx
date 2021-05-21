@@ -7,6 +7,7 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
+import { Header } from "../components/header";
 import Loading from "../components/loading";
 import { Restaurants } from "../pages/client/restauratns";
 import { LoginUserQuery } from "../__generated__/LoginUserQuery";
@@ -39,6 +40,7 @@ export const LoggedInRouter = () => {
   }
   return (
     <Router>
+      <Header />
       <Switch>
         {data.loginUser.role === "Client" && ClientRouter}
         <Redirect to="/" />

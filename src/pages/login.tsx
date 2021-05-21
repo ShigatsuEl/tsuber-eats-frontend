@@ -11,7 +11,7 @@ import {
 import tsuberLogo from "../images/eats-logo.svg";
 import { Button } from "../components/button";
 import { Link } from "react-router-dom";
-import { authToken, isLoggedInVar } from "../apollo";
+import { authTokenVar, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 
 // 8번째 라인은 오직 프론트엔드를 위한 것이다. 백엔드로 전송되지 않는다.
@@ -52,7 +52,7 @@ export const LogIn = () => {
     } = data;
     if (ok && token) {
       localStorage.setItem(LOCALSTORAGE_TOKEN, token);
-      authToken(token);
+      authTokenVar(token);
       isLoggedInVar(true);
     }
   }

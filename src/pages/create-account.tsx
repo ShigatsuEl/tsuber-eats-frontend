@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import tsuberLogo from "../images/eats-logo.svg";
@@ -17,7 +17,8 @@ import {
   LoginMutation,
   LoginMutationVariables,
 } from "../__generated__/LoginMutation";
-import { isLoggedInVar } from "../apollo";
+import { authToken, isLoggedInVar } from "../apollo";
+import { LOCALSTORAGE_TOKEN } from "../constants";
 
 // 8번째 라인은 오직 프론트엔드를 위한 것이다. 백엔드로 전송되지 않는다.
 const CREATE_ACCOUNT_MUTATION = gql`
@@ -83,10 +84,12 @@ export const CreateAccount = () => {
 
   function onLoginCompleted(data: LoginMutation) {
     const {
-      login: { ok },
+      login: { ok, token },
     } = data;
-    if (ok) {
+    if (ok && token) {
       // redirect
+      localStorage.setItem(LOCALSTORAGE_TOKEN, token);
+      authToken(token);
       isLoggedInVar(true);
       history.push("/");
     }

@@ -1,8 +1,21 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from "react-router-dom";
 import Loading from "../components/loading";
+import { Restaurants } from "../pages/client/restauratns";
 import { LoginUserQuery } from "../__generated__/LoginUserQuery";
+
+const ClientRouter = [
+  <Route path="/" exact>
+    <Restaurants />
+  </Route>,
+];
 
 const LOGIN_USER_QUERY = gql`
   query LoginUserQuery {
@@ -25,8 +38,11 @@ export const LoggedInRouter = () => {
     );
   }
   return (
-    <div>
-      <h1>{data.loginUser.role}</h1>
-    </div>
+    <Router>
+      <Switch>
+        {data.loginUser.role === "Client" && ClientRouter}
+        <Redirect to="/" />
+      </Switch>
+    </Router>
   );
 };

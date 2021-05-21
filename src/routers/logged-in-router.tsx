@@ -1,5 +1,3 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -9,8 +7,8 @@ import {
 } from "react-router-dom";
 import { Header } from "../components/header";
 import Loading from "../components/loading";
+import { useLoginUser } from "../hooks/useLoginUser";
 import { Restaurants } from "../pages/client/restauratns";
-import { LoginUserQuery } from "../__generated__/LoginUserQuery";
 
 const ClientRouter = [
   <Route path="/" exact>
@@ -18,19 +16,8 @@ const ClientRouter = [
   </Route>,
 ];
 
-const LOGIN_USER_QUERY = gql`
-  query LoginUserQuery {
-    loginUser {
-      id
-      email
-      role
-      verified
-    }
-  }
-`;
-
 export const LoggedInRouter = () => {
-  const { data, error, loading } = useQuery<LoginUserQuery>(LOGIN_USER_QUERY);
+  const { data, error, loading } = useLoginUser();
   if (!data || loading || error) {
     return (
       <div className="flex justify-center items-center h-screen">

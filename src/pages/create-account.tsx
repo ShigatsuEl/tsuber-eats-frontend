@@ -12,6 +12,12 @@ import {
   CreateAccountMutation,
   CreateAccountMutationVariables,
 } from "../__generated__/CreateAccountMutation";
+import { LOGIN_MUTATION } from "./login";
+import {
+  LoginMutation,
+  LoginMutationVariables,
+} from "../__generated__/LoginMutation";
+import { isLoggedInVar } from "../apollo";
 
 // 8번째 라인은 오직 프론트엔드를 위한 것이다. 백엔드로 전송되지 않는다.
 const CREATE_ACCOUNT_MUTATION = gql`
@@ -50,14 +56,38 @@ export const CreateAccount = () => {
       onCompleted,
     }
   );
+  const [loginMutaion, { loading: loginLoading }] = useMutation<
+    LoginMutation,
+    LoginMutationVariables
+  >(LOGIN_MUTATION, {
+    onCompleted: onLoginCompleted,
+  });
   const history = useHistory();
 
   function onCompleted(data: CreateAccountMutation) {
     const {
       createAccount: { ok },
     } = data;
+    const { email, password } = getValues();
+    if (ok) {
+      loginMutaion({
+        variables: {
+          loginInput: {
+            email,
+            password,
+          },
+        },
+      });
+    }
+  }
+
+  function onLoginCompleted(data: LoginMutation) {
+    const {
+      login: { ok },
+    } = data;
     if (ok) {
       // redirect
+      isLoggedInVar(true);
       history.push("/");
     }
   }
@@ -76,6 +106,7 @@ export const CreateAccount = () => {
       });
     }
   };
+
   return (
     <div className="flex flex-col items-center h-screen mt-8 lg:mt-24">
       <Helmet>
@@ -135,7 +166,7 @@ export const CreateAccount = () => {
           </select>
           <Button
             canClick={isValid}
-            loading={loading}
+            loading={loading && loginLoading}
             actionText="Create Account"
           />
           {createAccountMutationResult?.createAccount.error && (

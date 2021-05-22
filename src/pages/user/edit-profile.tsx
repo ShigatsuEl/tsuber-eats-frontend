@@ -1,7 +1,8 @@
-import { useMutation } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useHistory } from "react-router";
 import { Button } from "../../components/button";
 import { FormError } from "../../components/form-error";
 import { useLoginUser } from "../../hooks/useLoginUser";
@@ -27,7 +28,8 @@ interface IFormProps {
 }
 
 export const EditProfile = () => {
-  const { data } = useLoginUser();
+  const client = useApolloClient();
+  const { data: loginUserData } = useLoginUser();
   const {
     register,
     handleSubmit,
@@ -36,7 +38,7 @@ export const EditProfile = () => {
   } = useForm<IFormProps>({
     mode: "onChange",
     defaultValues: {
-      email: data?.loginUser.email,
+      email: loginUserData?.loginUser.email,
     },
   });
   const [editUserProfile, { loading }] = useMutation<
@@ -45,6 +47,7 @@ export const EditProfile = () => {
   >(EDIT_USER_PROFILE_MUTATION, {
     onCompleted,
   });
+  const history = useHistory();
 
   const onValid = () => {
     const { email, password } = getValues();
@@ -62,8 +65,28 @@ export const EditProfile = () => {
     const {
       editUserProfile: { ok },
     } = data;
-    if (ok) {
+    if (ok && loginUserData) {
       //update cache
+      const {
+        loginUser: { id, email: prevEmail },
+      } = loginUserData;
+      const { email: newEmail } = getValues();
+      if (prevEmail !== newEmail) {
+        client.writeFragment({
+          id: `User:${id}`,
+          fragment: gql`
+            fragment EditedUser on User {
+              email
+              verified
+            }
+          `,
+          data: {
+            email: newEmail,
+            verified: false,
+          },
+        });
+        history.push("/");
+      }
     }
   }
 

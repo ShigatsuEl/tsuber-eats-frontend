@@ -13,4 +13,8 @@
   @apply fixed inset-0 z-20 block transition-opacity bg-black opacity-50;
 }
 
+.confirm-email-container {
+  height: calc(100vh - theme("spacing.24"));
+}
+
 @tailwind utilities;

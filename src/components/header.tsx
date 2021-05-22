@@ -10,7 +10,7 @@ export const Header: React.FC = () => {
     <header className="py-5 px-10">
       <div className="flex items-center">
         <div className="flex py-3">
-          <NavSideBar />
+          <NavSideBar data={data} />
           <Logo where={LogoLocation.Header} />
         </div>
       </div>

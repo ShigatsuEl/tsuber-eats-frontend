@@ -4,9 +4,14 @@ import React, { useState } from "react";
 import { Navigation } from "react-minimal-side-navigation";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import { useHistory, useLocation } from "react-router";
+import { LoginUserQuery } from "../__generated__/LoginUserQuery";
 import { Logo, LogoLocation } from "./logo";
 
-export const NavSideBar = () => {
+interface INavSideBarProps {
+  data?: LoginUserQuery;
+}
+
+export const NavSideBar: React.FC<INavSideBarProps> = ({ data }) => {
   const history = useHistory();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -34,11 +39,18 @@ export const NavSideBar = () => {
           isSidebarOpen ? "ease-out translate-x-0" : "ease-in -translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-center mt-10 text-center py-6">
+        <div className="flex items-center justify-center mt-2 text-center py-6">
           <span className="mx-2 text-2xl font-semibold text-black">
             <Logo where={LogoLocation.Header} />
           </span>
         </div>
+        {!data?.loginUser.verified && (
+          <div className="flex justify-center bg-lime-500 p-2">
+            <span className="font-semibold text-white">
+              Please verify your email
+            </span>
+          </div>
+        )}
 
         <Navigation
           activeItemId={location.pathname}

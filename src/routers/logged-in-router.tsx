@@ -11,7 +11,7 @@ import { useLoginUser } from "../hooks/useLoginUser";
 import { Restaurants } from "../pages/client/restauratns";
 
 const ClientRouter = [
-  <Route path="/" exact>
+  <Route key="1" path="/" exact>
     <Restaurants />
   </Route>,
 ];

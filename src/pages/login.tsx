@@ -114,9 +114,6 @@ export const LogIn = () => {
           {errors.password?.message && (
             <FormError errorMessage={errors.password.message} />
           )}
-          {errors.password?.type === "minLength" && (
-            <FormError errorMessage="Password must be more than 10 characters" />
-          )}
           <Button canClick={isValid} loading={loading} actionText="Log In" />
           {loginMutationResult?.login.error && (
             <FormError errorMessage={loginMutationResult.login.error} />

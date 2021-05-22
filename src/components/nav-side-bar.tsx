@@ -55,7 +55,10 @@ export const NavSideBar: React.FC<INavSideBarProps> = ({ data }) => {
         <Navigation
           activeItemId={location.pathname}
           onSelect={({ itemId }) => {
-            if (itemId.indexOf("/") !== 0) {
+            if (
+              itemId.match(/\//g)?.length !== 1 ||
+              (itemId.match(/\//g)?.length === 1 && itemId.match(/-/g)?.length)
+            ) {
               history.push(itemId);
             }
           }}

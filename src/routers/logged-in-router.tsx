@@ -10,6 +10,7 @@ import Loading from "../components/loading";
 import { useLoginUser } from "../hooks/useLoginUser";
 import { Restaurants } from "../pages/client/restauratns";
 import { ConfirmEmail } from "../pages/user/confirm-email";
+import { EditProfile } from "../pages/user/edit-profile";
 
 const ClientRouter = [
   <Route key="1" path="/" exact>
@@ -17,6 +18,9 @@ const ClientRouter = [
   </Route>,
   <Route key="2" path="/confirm" exact>
     <ConfirmEmail />
+  </Route>,
+  <Route key="3" path="/profile/edit" exact>
+    <EditProfile />
   </Route>,
 ];
 
@@ -34,7 +38,7 @@ export const LoggedInRouter = () => {
       <Header />
       <Switch>
         {data.loginUser.role === "Client" && ClientRouter}
-        {/* <Redirect to="/" /> */}
+        <Redirect to="/" />
       </Switch>
     </Router>
   );

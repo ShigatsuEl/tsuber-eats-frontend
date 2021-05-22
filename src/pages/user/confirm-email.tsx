@@ -2,6 +2,7 @@
 import { useApolloClient, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useEffect } from "react";
+import { useHistory } from "react-router";
 import Loading from "../../components/loading";
 import { useLoginUser } from "../../hooks/useLoginUser";
 import { useQueryParam } from "../../hooks/useQueryParam";
@@ -29,6 +30,7 @@ export const ConfirmEmail = () => {
     onCompleted,
   });
   const param = useQueryParam();
+  const history = useHistory();
 
   function onCompleted(data: VerifyEmailMutation) {
     const {
@@ -46,6 +48,7 @@ export const ConfirmEmail = () => {
           verified: true,
         },
       });
+      history.push("/");
     }
   }
 

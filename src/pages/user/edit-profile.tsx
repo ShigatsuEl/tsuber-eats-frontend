@@ -1,6 +1,7 @@
 import { useApolloClient, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
+import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 import { Button } from "../../components/button";
@@ -92,6 +93,9 @@ export const EditProfile = () => {
 
   return (
     <div className="h-except-header flex flex-col items-center pt-36 2xl:pt-72">
+      <Helmet>
+        <title>Edit Profile | Tsuber Eats</title>
+      </Helmet>
       <h4 className="font-semibold text-2xl mb-3">Edit Profile</h4>
       <form
         onSubmit={handleSubmit(onValid)}

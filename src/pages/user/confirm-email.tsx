@@ -2,6 +2,7 @@
 import { useApolloClient, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useEffect } from "react";
+import { Helmet } from "react-helmet";
 import { useHistory } from "react-router";
 import Loading from "../../components/loading";
 import { useLoginUser } from "../../hooks/useLoginUser";
@@ -67,6 +68,9 @@ export const ConfirmEmail = () => {
 
   return (
     <div className="h-except-header flex flex-col items-center pt-36">
+      <Helmet>
+        <title>Confirm Email | Tsuber Eats</title>
+      </Helmet>
       <h2 className="mb-4 font-semibold text-xl">Confirming email...</h2>
       <h4 className="text-medium text-gray-700">
         Please wait, Don't close this page.

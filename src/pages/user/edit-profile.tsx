@@ -91,11 +91,11 @@ export const EditProfile = () => {
   }
 
   return (
-    <div className="mt-40 flex flex-col justify-center items-center">
+    <div className="h-except-header flex flex-col items-center pt-36 2xl:pt-72">
       <h4 className="font-semibold text-2xl mb-3">Edit Profile</h4>
       <form
         onSubmit={handleSubmit(onValid)}
-        className="grid max-w-screen-sm gap-3 mt-5 w-full mb-5"
+        className="grid gap-3 max-w-screen-sm w-full my-5 px-10 lg:px-0"
       >
         <input
           {...register("email", {

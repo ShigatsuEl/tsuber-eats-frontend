@@ -11,6 +11,7 @@ import { useLoginUser } from "../hooks/useLoginUser";
 import { Restaurants } from "../pages/client/restauratns";
 import { ConfirmEmail } from "../pages/user/confirm-email";
 import { EditProfile } from "../pages/user/edit-profile";
+import { MyProfile } from "../pages/user/my-profile";
 
 const ClientRouter = [
   <Route key="1" path="/" exact>
@@ -19,7 +20,10 @@ const ClientRouter = [
   <Route key="2" path="/confirm" exact>
     <ConfirmEmail />
   </Route>,
-  <Route key="3" path="/profile/edit" exact>
+  <Route key="3" path="/profile/me" exact>
+    <MyProfile />
+  </Route>,
+  <Route key="4" path="/profile/edit" exact>
     <EditProfile />
   </Route>,
 ];

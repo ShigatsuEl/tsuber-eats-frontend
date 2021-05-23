@@ -66,7 +66,7 @@ export const ConfirmEmail = () => {
   }, []);
 
   return (
-    <div className="confirm-email-container flex flex-col items-center pt-36">
+    <div className="h-except-header flex flex-col items-center pt-36">
       <h2 className="mb-4 font-semibold text-xl">Confirming email...</h2>
       <h4 className="text-medium text-gray-700">
         Please wait, Don't close this page.

@@ -60,6 +60,7 @@ export const NavSideBar: React.FC<INavSideBarProps> = ({ data }) => {
               (itemId.match(/\//g)?.length === 1 && itemId.match(/-/g)?.length)
             ) {
               history.push(itemId);
+              setIsSidebarOpen(false);
             }
           }}
           items={[
@@ -71,7 +72,7 @@ export const NavSideBar: React.FC<INavSideBarProps> = ({ data }) => {
               ),
               subNav: [
                 {
-                  title: "My Profile",
+                  title: "My Information",
                   itemId: "/profile/me",
                 },
                 {

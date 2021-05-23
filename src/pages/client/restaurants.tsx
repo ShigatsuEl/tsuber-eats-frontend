@@ -1,6 +1,6 @@
-import { url } from "inspector";
 import React from "react";
 import { Category } from "../../components/category";
+import { RestaurantList } from "../../components/restaurant-list";
 import { useRestaurants } from "../../hooks/useRestaurants";
 
 export const Restaurants = () => {
@@ -23,17 +23,8 @@ export const Restaurants = () => {
           <div className="flex flex-wrap justify-center my-5 mx-10 border-b">
             <Category data={data} />
           </div>
-          <div className="grid grid-cols-3 gap-6 mx-10">
-            {data?.getAllRestaurants.results?.map((restaurant) => (
-              <div>
-                <div
-                  className="mb-3 py-28 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${restaurant.coverImg})` }}
-                ></div>
-                <h3 className="font-semibold text-lg">{restaurant.name}</h3>
-                <span>{restaurant.category?.name}</span>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 gap-6 mx-10 sm:grid-cols-2 lg:grid-cols-3">
+            <RestaurantList data={data} />
           </div>
         </>
       )}

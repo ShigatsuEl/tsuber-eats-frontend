@@ -1,4 +1,6 @@
+import { url } from "inspector";
 import React from "react";
+import { Category } from "../../components/category";
 import { useRestaurants } from "../../hooks/useRestaurants";
 
 export const Restaurants = () => {
@@ -17,19 +19,23 @@ export const Restaurants = () => {
         </div>
       </div>
       {!loading && (
-        <div className="flex flex-wrap justify-center my-5 mx-10">
-          {data?.getAllCategories.categories?.map((catetory, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <div
-                className="w-16 h-16 mx-4 mb-1 rounded-full bg-cover bg-center bg-opacity-60 hover:bg-gray-200"
-                style={{ backgroundImage: `url(${catetory.coverImg})` }}
-              ></div>
-              <span className="inline-block w-20 mb-4 break-words capitalize text-center">
-                {catetory.name}
-              </span>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="flex flex-wrap justify-center my-5 mx-10 border-b">
+            <Category data={data} />
+          </div>
+          <div className="grid grid-cols-3 gap-6 mx-10">
+            {data?.getAllRestaurants.results?.map((restaurant) => (
+              <div>
+                <div
+                  className="mb-3 py-28 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${restaurant.coverImg})` }}
+                ></div>
+                <h3 className="font-semibold text-lg">{restaurant.name}</h3>
+                <span>{restaurant.category?.name}</span>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

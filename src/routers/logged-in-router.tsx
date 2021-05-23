@@ -8,7 +8,7 @@ import {
 import { Header } from "../components/header";
 import Loading from "../components/loading";
 import { useLoginUser } from "../hooks/useLoginUser";
-import { Restaurants } from "../pages/client/restauratns";
+import { Restaurants } from "../pages/client/restaurants";
 import { ConfirmEmail } from "../pages/user/confirm-email";
 import { EditProfile } from "../pages/user/edit-profile";
 import { MyProfile } from "../pages/user/my-profile";

@@ -9,21 +9,25 @@ import { Header } from "../components/header";
 import Loading from "../components/loading";
 import { useLoginUser } from "../hooks/useLoginUser";
 import { Restaurants } from "../pages/client/restaurants";
+import { Search } from "../pages/client/search";
 import { ConfirmEmail } from "../pages/user/confirm-email";
 import { EditProfile } from "../pages/user/edit-profile";
 import { MyProfile } from "../pages/user/my-profile";
 
 const ClientRouter = [
-  <Route key="1" path="/" exact>
+  <Route key={1} path="/" exact>
     <Restaurants />
   </Route>,
-  <Route key="2" path="/confirm" exact>
+  <Route key={2} path="/confirm" exact>
     <ConfirmEmail />
   </Route>,
-  <Route key="3" path="/profile/me" exact>
+  <Route key={3} path="/search" exact>
+    <Search />
+  </Route>,
+  <Route key={4} path="/profile/me" exact>
     <MyProfile />
   </Route>,
-  <Route key="4" path="/profile/edit" exact>
+  <Route key={5} path="/profile/edit" exact>
     <EditProfile />
   </Route>,
 ];
@@ -42,7 +46,7 @@ export const LoggedInRouter = () => {
       <Header />
       <Switch>
         {data.loginUser.role === "Client" && ClientRouter}
-        <Redirect to="/" />
+        {/* <Redirect to="/" /> */}
       </Switch>
     </Router>
   );

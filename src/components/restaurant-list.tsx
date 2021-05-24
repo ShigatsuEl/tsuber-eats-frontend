@@ -8,8 +8,8 @@ interface IRestaurantListProps {
 export const RestaurantList: React.FC<IRestaurantListProps> = ({ data }) => {
   return (
     <>
-      {data?.getAllRestaurants.results?.map((restaurant, index) => (
-        <div key={index}>
+      {data?.getAllRestaurants.results?.map((restaurant) => (
+        <div key={restaurant.id}>
           <div
             className="mb-3 py-28 bg-cover bg-center"
             style={{ backgroundImage: `url(${restaurant.coverImg})` }}

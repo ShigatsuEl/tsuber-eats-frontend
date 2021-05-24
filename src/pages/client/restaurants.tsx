@@ -43,6 +43,7 @@ export const Restaurants = () => {
           <div className="grid grid-cols-1 gap-6 mx-10 mb-5 sm:grid-cols-2 lg:grid-cols-3">
             {data?.getAllRestaurants.results?.map((restaurant) => (
               <RestaurantContainer
+                key={restaurant.id + ""}
                 id={restaurant.id + ""}
                 coverImg={restaurant.coverImg}
                 name={restaurant.name}

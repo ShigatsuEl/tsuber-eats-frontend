@@ -2,6 +2,8 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
 import { useParams } from "react-router";
+import Loading from "../../components/loading";
+import { RestaurantContainer } from "../../components/restaurant-container";
 import { CATEGORY_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   GetCategoryQuery,
@@ -45,6 +47,24 @@ export const Category = () => {
     },
   });
 
-  console.log(data);
-  return <h1>Category</h1>;
+  return (
+    <React.Fragment>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="grid grid-cols-1 gap-6 mx-10 mb-5 sm:grid-cols-2 lg:grid-cols-3">
+          {data?.getCategory.restaurants?.map((restaurant) => (
+            <RestaurantContainer
+              key={restaurant.id + ""}
+              id={restaurant.id + ""}
+              coverImg={restaurant.coverImg}
+              name={restaurant.name}
+              categoryName={restaurant.category?.name!}
+              address={restaurant.address}
+            />
+          ))}
+        </div>
+      )}
+    </React.Fragment>
+  );
 };

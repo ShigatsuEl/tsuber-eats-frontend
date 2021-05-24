@@ -2,7 +2,7 @@
 import { useApolloClient, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useEffect } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useHistory } from "react-router";
 import Loading from "../../components/loading";
 import { useLoginUser } from "../../hooks/useLoginUser";

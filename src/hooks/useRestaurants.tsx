@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useState } from "react";
+import { RESTAURANT_FRAGMENT } from "../fragments";
 import {
   GetAllRestaurantsQuery,
   GetAllRestaurantsQueryVariables,
@@ -25,17 +26,11 @@ const GET_ALL_RESTAURANTS_QUERY = gql`
       totalPages
       totalResults
       results {
-        id
-        name
-        coverImg
-        category {
-          name
-        }
-        address
-        isPromoted
+        ...RestaurantResults
       }
     }
   }
+  ${RESTAURANT_FRAGMENT}
 `;
 
 export const useRestaurants = () => {

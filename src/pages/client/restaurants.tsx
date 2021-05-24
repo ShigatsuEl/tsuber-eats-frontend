@@ -1,6 +1,7 @@
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { Category } from "../../components/category";
 import { RestaurantList } from "../../components/restaurant-list";
 import { useRestaurants } from "../../hooks/useRestaurants";
@@ -13,6 +14,9 @@ export const Restaurants = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>Restaurants | Tsuber Eats</title>
+      </Helmet>
       <div className="flex flex-col w-full px-10 bg-gray-800">
         <div>
           <h2 className="mb-5 pt-32 font-medium text-4xl text-white">

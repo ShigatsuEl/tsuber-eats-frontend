@@ -2,7 +2,7 @@ import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { Category } from "../../components/category";
+import { CategoryContainer } from "../../components/category-container";
 import { RestaurantList } from "../../components/restaurant-list";
 import { useRestaurants } from "../../hooks/useRestaurants";
 
@@ -30,7 +30,7 @@ export const Restaurants = () => {
       {!loading && (
         <>
           <div className="flex flex-wrap justify-center my-5 mx-10 border-b">
-            <Category data={data} />
+            <CategoryContainer data={data} />
           </div>
           <div className="grid grid-cols-1 gap-6 mx-10 mb-5 sm:grid-cols-2 lg:grid-cols-3">
             <RestaurantList data={data} />

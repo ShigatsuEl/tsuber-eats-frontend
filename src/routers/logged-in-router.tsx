@@ -8,6 +8,7 @@ import {
 import { Header } from "../components/header";
 import Loading from "../components/loading";
 import { useLoginUser } from "../hooks/useLoginUser";
+import { Category } from "../pages/client/category";
 import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
 import { ConfirmEmail } from "../pages/user/confirm-email";
@@ -18,17 +19,20 @@ const ClientRouter = [
   <Route key={1} path="/" exact>
     <Restaurants />
   </Route>,
-  <Route key={2} path="/confirm" exact>
+  <Route key={2} path="/confirm">
     <ConfirmEmail />
   </Route>,
-  <Route key={3} path="/search" exact>
+  <Route key={3} path="/search">
     <Search />
   </Route>,
-  <Route key={4} path="/profile/me" exact>
+  <Route key={4} path="/profile/me">
     <MyProfile />
   </Route>,
-  <Route key={5} path="/profile/edit" exact>
+  <Route key={5} path="/profile/edit">
     <EditProfile />
+  </Route>,
+  <Route key={6} path="/category/:slug">
+    <Category />
   </Route>,
 ];
 
@@ -46,7 +50,7 @@ export const LoggedInRouter = () => {
       <Header />
       <Switch>
         {data.loginUser.role === "Client" && ClientRouter}
-        {/* <Redirect to="/" /> */}
+        <Redirect to="/" />
       </Switch>
     </Router>
   );

@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useState } from "react";
-import { RESTAURANT_FRAGMENT } from "../fragments";
+import { CATEGORY_FRAGMENT, RESTAURANT_FRAGMENT } from "../fragments";
 import {
   GetAllRestaurantsQuery,
   GetAllRestaurantsQueryVariables,
@@ -13,11 +13,7 @@ const GET_ALL_RESTAURANTS_QUERY = gql`
       ok
       error
       categories {
-        id
-        name
-        coverImg
-        slug
-        restaurantCount
+        ...CategoryResults
       }
     }
     getAllRestaurants(input: $input) {
@@ -31,6 +27,7 @@ const GET_ALL_RESTAURANTS_QUERY = gql`
     }
   }
   ${RESTAURANT_FRAGMENT}
+  ${CATEGORY_FRAGMENT}
 `;
 
 export const useRestaurants = () => {

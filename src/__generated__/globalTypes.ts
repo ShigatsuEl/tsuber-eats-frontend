@@ -24,6 +24,11 @@ export interface EditUserProfileInput {
   password?: string | null;
 }
 
+export interface GetCategoryInput {
+  page?: number | null;
+  slug: string;
+}
+
 export interface GetRestaurantsInput {
   page?: number | null;
 }

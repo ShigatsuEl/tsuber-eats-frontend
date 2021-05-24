@@ -30,7 +30,15 @@ export const Restaurants = () => {
       {!loading && (
         <>
           <div className="flex flex-wrap justify-center my-5 mx-10 border-b">
-            <CategoryContainer data={data} />
+            {data?.getAllCategories.categories?.map((catetory) => (
+              <CategoryContainer
+                key={catetory.id + ""}
+                id={catetory.id + ""}
+                slug={catetory.slug}
+                coverImg={catetory.coverImg!}
+                name={catetory.name}
+              />
+            ))}
           </div>
           <div className="grid grid-cols-1 gap-6 mx-10 mb-5 sm:grid-cols-2 lg:grid-cols-3">
             <RestaurantList data={data} />

@@ -3,25 +3,28 @@ import { Link } from "react-router-dom";
 import { GetAllRestaurantsQuery } from "../__generated__/GetAllRestaurantsQuery";
 
 interface ICategoryProps {
-  data?: GetAllRestaurantsQuery;
+  id: string;
+  slug: string;
+  coverImg: string;
+  name: string;
 }
 
-export const CategoryContainer: React.FC<ICategoryProps> = ({ data }) => {
+export const CategoryContainer: React.FC<ICategoryProps> = ({
+  slug,
+  coverImg,
+  name,
+}) => {
   return (
-    <>
-      {data?.getAllCategories.categories?.map((catetory) => (
-        <Link key={catetory.id} to={`/category/${catetory.slug}`}>
-          <div className="flex flex-col items-center mb-5">
-            <div
-              className="w-16 h-16 mx-4 mb-1 rounded-full bg-cover bg-center bg-opacity-60 hover:bg-gray-200"
-              style={{ backgroundImage: `url(${catetory.coverImg})` }}
-            ></div>
-            <span className="inline-block w-20 break-words capitalize text-center">
-              {catetory.name}
-            </span>
-          </div>
-        </Link>
-      ))}
-    </>
+    <Link to={`/category/${slug}`}>
+      <div className="flex flex-col items-center mb-5">
+        <div
+          className="w-16 h-16 mx-4 mb-1 rounded-full bg-cover bg-center bg-opacity-60 hover:bg-gray-200"
+          style={{ backgroundImage: `url(${coverImg})` }}
+        ></div>
+        <span className="inline-block w-20 break-words capitalize text-center">
+          {name}
+        </span>
+      </div>
+    </Link>
   );
 };

@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router";
 import Loading from "../../components/loading";
 import { RestaurantContainer } from "../../components/restaurant-container";
@@ -49,6 +50,9 @@ export const Category = () => {
 
   return (
     <React.Fragment>
+      <Helmet>
+        <title>Category | Tsuber Eats</title>
+      </Helmet>
       {loading ? (
         <Loading />
       ) : (

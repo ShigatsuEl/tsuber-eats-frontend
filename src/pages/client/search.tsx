@@ -3,6 +3,8 @@ import gql from "graphql-tag";
 import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useHistory, useLocation } from "react-router";
+import Loading from "../../components/loading";
+import { RestaurantContainer } from "../../components/restaurant-container";
 import { RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   SearchRestaurantQuery,
@@ -50,11 +52,26 @@ export const Search = () => {
   }, [called, data, history, loading, location, searchRestaurant]);
 
   return (
-    <div>
+    <React.Fragment>
       <Helmet>
         <title>Search | Tsuber Eats</title>
       </Helmet>
-      <h1>Search</h1>
-    </div>
+      {loading && !called ? (
+        <Loading />
+      ) : (
+        <div className="grid grid-cols-1 gap-6 mx-10 mb-5 sm:grid-cols-2 lg:grid-cols-3">
+          {data?.searchRestaurant.results?.map((restaurant) => (
+            <RestaurantContainer
+              key={restaurant.id + ""}
+              id={restaurant.id + ""}
+              coverImg={restaurant.coverImg}
+              name={restaurant.name}
+              categoryName={restaurant.category?.name!}
+              address={restaurant.address}
+            />
+          ))}
+        </div>
+      )}
+    </React.Fragment>
   );
 };

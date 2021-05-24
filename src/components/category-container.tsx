@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { GetAllRestaurantsQuery } from "../__generated__/GetAllRestaurantsQuery";
 
 interface ICategoryProps {
   id: string;

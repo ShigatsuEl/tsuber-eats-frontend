@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
+import { useState } from "react";
 import {
   GetAllRestaurantsQuery,
   GetAllRestaurantsQueryVariables,
@@ -38,14 +39,19 @@ const GET_ALL_RESTAURANTS_QUERY = gql`
 `;
 
 export const useRestaurants = () => {
-  return useQuery<GetAllRestaurantsQuery, GetAllRestaurantsQueryVariables>(
-    GET_ALL_RESTAURANTS_QUERY,
-    {
-      variables: {
-        input: {
-          page: 1,
+  const [page, setPage] = useState(1);
+  return {
+    ...useQuery<GetAllRestaurantsQuery, GetAllRestaurantsQueryVariables>(
+      GET_ALL_RESTAURANTS_QUERY,
+      {
+        variables: {
+          input: {
+            page,
+          },
         },
-      },
-    }
-  );
+      }
+    ),
+    page,
+    setPage,
+  };
 };

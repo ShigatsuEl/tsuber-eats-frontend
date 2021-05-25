@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface IRestaurantListProps {
   id: string;
@@ -16,16 +17,18 @@ export const RestaurantContainer: React.FC<IRestaurantListProps> = ({
   address,
 }) => {
   return (
-    <div key={id}>
-      <div
-        className="mb-3 py-28 bg-cover bg-center"
-        style={{ backgroundImage: `url(${coverImg})` }}
-      ></div>
-      <div className="flex justify-between border-b pb-1">
-        <h3 className="font-semibold text-lg">{name}</h3>
-        <span className="capitalize">{categoryName}</span>
+    <Link to={`/restaurant/${id}`}>
+      <div key={id}>
+        <div
+          className="mb-3 py-28 bg-cover bg-center"
+          style={{ backgroundImage: `url(${coverImg})` }}
+        ></div>
+        <div className="flex justify-between border-b pb-1">
+          <h3 className="font-semibold text-lg">{name}</h3>
+          <span className="capitalize text-lime-600">{categoryName}</span>
+        </div>
+        <span className="inline-block pt-1 capitalize">{address}</span>
       </div>
-      <span className="inline-block pt-1 capitalize">{address}</span>
-    </div>
+    </Link>
   );
 };

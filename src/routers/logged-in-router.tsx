@@ -9,6 +9,7 @@ import { Header } from "../components/header";
 import Loading from "../components/loading";
 import { useLoginUser } from "../hooks/useLoginUser";
 import { Category } from "../pages/client/category";
+import { Restaurant } from "../pages/client/restaurant";
 import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
 import { ConfirmEmail } from "../pages/user/confirm-email";
@@ -33,6 +34,9 @@ const ClientRouter = [
   </Route>,
   <Route key={6} path="/category/:slug">
     <Category />
+  </Route>,
+  <Route key={7} path="/restaurant/:id">
+    <Restaurant />
   </Route>,
 ];
 

@@ -29,6 +29,10 @@ export interface GetCategoryInput {
   slug: string;
 }
 
+export interface GetRestaurantInput {
+  restaurantId: number;
+}
+
 export interface GetRestaurantsInput {
   page?: number | null;
 }

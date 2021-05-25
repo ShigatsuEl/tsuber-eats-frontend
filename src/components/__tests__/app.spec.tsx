@@ -22,11 +22,10 @@ describe("<App />", () => {
   });
 
   it("renders LoggedInRouter", async () => {
-    const { debug, getByText } = render(<App />);
+    const { getByText } = render(<App />);
     await waitFor(() => {
       isLoggedInVar(true);
     });
-    debug();
     getByText("Logged In");
   });
 });

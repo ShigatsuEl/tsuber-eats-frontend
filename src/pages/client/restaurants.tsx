@@ -1,16 +1,12 @@
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { CategoryContainer } from "../../components/category-container";
+import { Pagination } from "../../components/pagination";
 import { RestaurantContainer } from "../../components/restaurant-container";
 import { useRestaurants } from "../../hooks/useRestaurants";
 
 export const Restaurants = () => {
   const { data, loading, page, setPage } = useRestaurants();
-
-  const onNextPageClick = () => setPage((current) => current + 1);
-  const onPrevPageClick = () => setPage((current) => current - 1);
 
   return (
     <div>
@@ -53,23 +49,11 @@ export const Restaurants = () => {
             ))}
           </div>
           <div className="flex justify-center items-center mb-5">
-            {page > 1 && (
-              <FontAwesomeIcon
-                icon={faArrowLeft}
-                className="font-medium text-2xl cursor-pointer focus:outline-none"
-                onClick={onPrevPageClick}
-              />
-            )}
-            <span className="mx-5 font-medium text-lg">
-              Page {page} of {data?.getAllRestaurants.totalPages}
-            </span>
-            {page !== data?.getAllRestaurants.totalPages && (
-              <FontAwesomeIcon
-                icon={faArrowRight}
-                className="font-medium text-2xl cursor-pointer focus:outline-none"
-                onClick={onNextPageClick}
-              />
-            )}
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPages={data?.getAllRestaurants.totalPages!}
+            />
           </div>
         </>
       )}

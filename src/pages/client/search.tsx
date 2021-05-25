@@ -1,9 +1,10 @@
 import { useLazyQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useHistory, useLocation } from "react-router";
 import Loading from "../../components/loading";
+import { Pagination } from "../../components/pagination";
 import { RestaurantContainer } from "../../components/restaurant-container";
 import { RESTAURANT_FRAGMENT } from "../../fragments";
 import {
@@ -27,6 +28,7 @@ const SEARCH_RESTAURANT_QUERY = gql`
 `;
 
 export const Search = () => {
+  const [page, setPage] = useState(1);
   const history = useHistory();
   const location = useLocation();
   const [searchRestaurant, { data, loading, called }] = useLazyQuery<
@@ -43,13 +45,12 @@ export const Search = () => {
     searchRestaurant({
       variables: {
         input: {
-          page: 1,
+          page,
           query,
         },
       },
     });
-    console.log(loading, data, called);
-  }, [called, data, history, loading, location, searchRestaurant]);
+  }, [called, data, history, loading, location, page, searchRestaurant]);
 
   return (
     <React.Fragment>
@@ -59,18 +60,27 @@ export const Search = () => {
       {loading && !called ? (
         <Loading />
       ) : (
-        <div className="grid grid-cols-1 gap-6 mx-10 mb-5 sm:grid-cols-2 lg:grid-cols-3">
-          {data?.searchRestaurant.results?.map((restaurant) => (
-            <RestaurantContainer
-              key={restaurant.id + ""}
-              id={restaurant.id + ""}
-              coverImg={restaurant.coverImg}
-              name={restaurant.name}
-              categoryName={restaurant.category?.name!}
-              address={restaurant.address}
+        <React.Fragment>
+          <div className="grid grid-cols-1 gap-6 mx-10 mb-5 sm:grid-cols-2 lg:grid-cols-3">
+            {data?.searchRestaurant.results?.map((restaurant) => (
+              <RestaurantContainer
+                key={restaurant.id + ""}
+                id={restaurant.id + ""}
+                coverImg={restaurant.coverImg}
+                name={restaurant.name}
+                categoryName={restaurant.category?.name!}
+                address={restaurant.address}
+              />
+            ))}
+          </div>
+          <div className="flex justify-center items-center mb-5">
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPages={data?.searchRestaurant.totalPages!}
             />
-          ))}
-        </div>
+          </div>
+        </React.Fragment>
       )}
     </React.Fragment>
   );

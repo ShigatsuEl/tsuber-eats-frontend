@@ -2,7 +2,7 @@ import { ApolloProvider } from "@apollo/client/react";
 import React from "react";
 import ReactDOM from "react-dom";
 import { HelmetProvider } from "react-helmet-async";
-import App from "./App";
+import App from "./components/app";
 import { client } from "./apollo";
 import reportWebVitals from "./reportWebVitals";
 import "./styles/styles.css";

@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@apollo/client@^3.3.18":
+"@apollo/client@^3.0.0", "@apollo/client@^3.3.18":
   "integrity" "sha512-SaJSda4V36/pnv7jkCBROBPwd3w/3TnG/Bd8oLESuNqm6ruXDHt067ow00Y2zz1AOL8SuOI9LXjmkr+FcTqnIQ=="
   "resolved" "https://registry.npmjs.org/@apollo/client/-/client-3.3.18.tgz"
   "version" "3.3.18"
@@ -7830,6 +7830,11 @@
   "integrity" "sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw=="
   "resolved" "https://registry.npmjs.org/mkdirp/-/mkdirp-1.0.4.tgz"
   "version" "1.0.4"
+
+"mock-apollo-client@^1.1.0":
+  "integrity" "sha512-OXCvwAwwHbieMMipcE3wGdPONPHC+f65EEiyC1XpYaS5Jk6/c7oBe9t8knwzAqyCQ9nZziHdR8UDqORPTfkcFw=="
+  "resolved" "https://registry.npmjs.org/mock-apollo-client/-/mock-apollo-client-1.1.0.tgz"
+  "version" "1.1.0"
 
 "modern-normalize@^1.0.0":
   "integrity" "sha512-2lMlY1Yc1+CUy0gw4H95uNN7vjbpoED7NNRSBHE25nWfLBdmMzFCsPshlzbxHz+gYMcBEUN8V4pU16prcdPSgA=="

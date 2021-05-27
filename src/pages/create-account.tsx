@@ -21,7 +21,7 @@ import { LOCALSTORAGE_TOKEN } from "../constants";
 import { Logo, LogoLocation } from "../components/logo";
 
 // 8번째 라인은 오직 프론트엔드를 위한 것이다. 백엔드로 전송되지 않는다.
-const CREATE_ACCOUNT_MUTATION = gql`
+export const CREATE_ACCOUNT_MUTATION = gql`
   mutation CreateAccountMutation($createAccountInput: CreateAccountInput!) {
     createAccount(input: $createAccountInput) {
       ok

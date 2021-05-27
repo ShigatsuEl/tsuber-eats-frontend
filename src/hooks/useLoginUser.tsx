@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { LoginUserQuery } from "../__generated__/LoginUserQuery";
 
-const LOGIN_USER_QUERY = gql`
+export const LOGIN_USER_QUERY = gql`
   query LoginUserQuery {
     loginUser {
       id

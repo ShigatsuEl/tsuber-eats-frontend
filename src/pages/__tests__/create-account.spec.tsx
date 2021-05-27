@@ -7,6 +7,20 @@ import { UserRole } from "../../__generated__/globalTypes";
 import { CreateAccount, CREATE_ACCOUNT_MUTATION } from "../create-account";
 import { LOGIN_MUTATION } from "../login";
 
+const mockPush = jest.fn();
+
+jest.mock("react-router-dom", () => {
+  const actualModule = jest.requireActual("react-router-dom");
+  return {
+    ...actualModule,
+    useHistory: () => {
+      return {
+        push: mockPush,
+      };
+    },
+  };
+});
+
 describe("<CreateAccount />", () => {
   let mockClient: MockApolloClient;
   let renderResult: RenderResult;
@@ -108,5 +122,10 @@ describe("<CreateAccount />", () => {
         password: formData.password,
       },
     });
+    expect(mockPush).toHaveBeenCalledWith("/");
+  });
+
+  afterAll(() => {
+    jest.clearAllMocks();
   });
 });

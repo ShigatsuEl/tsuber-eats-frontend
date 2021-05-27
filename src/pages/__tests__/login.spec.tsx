@@ -71,11 +71,12 @@ describe("<Login />", () => {
         login: {
           ok: true,
           token: "token",
-          error: null,
+          error: "Login Mutation Error",
         },
       },
     });
     mockClient.setRequestHandler(LOGIN_MUTATION, mutationHandler);
+    jest.spyOn(Storage.prototype, "setItem");
     await waitFor(() => {
       userEvent.type(emailInput, formData.email);
       userEvent.type(passwordInput, formData.password);
@@ -88,5 +89,8 @@ describe("<Login />", () => {
         password: formData.password,
       },
     });
+    const errorMessage = getByRole("alert");
+    expect(errorMessage).toHaveTextContent(/Login Mutation Error/i);
+    expect(localStorage.setItem).toHaveBeenCalledWith("tsuber-token", "token");
   });
 });

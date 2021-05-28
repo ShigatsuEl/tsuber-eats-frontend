@@ -20,16 +20,18 @@ export const Pagination: React.FC<IPaginationProps> = ({
     <React.Fragment>
       {page > 1 && (
         <FontAwesomeIcon
+          data-testid="left-btn"
           icon={faArrowLeft}
           className="font-medium text-2xl cursor-pointer focus:outline-none"
           onClick={onPrevPageClick}
         />
       )}
-      <span className="mx-5 font-medium text-lg">
+      <span data-testid="paginataion-text" className="mx-5 font-medium text-lg">
         Page {page} of {totalPages}
       </span>
       {page !== totalPages && (
         <FontAwesomeIcon
+          data-testid="right-btn"
           icon={faArrowRight}
           className="font-medium text-2xl cursor-pointer focus:outline-none"
           onClick={onNextPageClick}

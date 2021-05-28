@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-redundant-roles */
 import { faBars, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
@@ -19,12 +20,14 @@ export const NavSideBar: React.FC<INavSideBarProps> = ({ data }) => {
     <>
       {/* Sidebar Overlay */}
       <div
+        data-testid="side-bar-overlay"
         onClick={() => setIsSidebarOpen(false)}
         className={`side-bar-overlay ${isSidebarOpen ? "block" : "hidden"}`}
       />
 
       <div>
         <button
+          role="button"
           className="mr-9"
           onClick={(): void => setIsSidebarOpen(true)}
           type="button"
@@ -35,6 +38,7 @@ export const NavSideBar: React.FC<INavSideBarProps> = ({ data }) => {
 
       {/* Sidebar */}
       <div
+        data-testid="side-bar"
         className={`side-bar ${
           isSidebarOpen ? "ease-out translate-x-0" : "ease-in -translate-x-full"
         }`}
@@ -45,7 +49,10 @@ export const NavSideBar: React.FC<INavSideBarProps> = ({ data }) => {
           </span>
         </div>
         {!data?.loginUser.verified && (
-          <div className="flex justify-center bg-lime-500 p-2">
+          <div
+            role="alertdialog"
+            className="flex justify-center bg-lime-500 p-2"
+          >
             <span className="font-semibold text-white">
               Please verify your email
             </span>

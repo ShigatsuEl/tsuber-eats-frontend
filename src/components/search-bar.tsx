@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-redundant-roles */
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
@@ -28,12 +29,13 @@ export const SearchBar: React.FC<ISearchBarProps> = ({ className, data }) => {
 
   return (
     <div
+      data-testid="search-bar"
       className={
         (className && className) || "relative w-full mt-5 sm:w-1/2 sm:mt-0"
       }
     >
       <FontAwesomeIcon icon={faSearch} className="absolute top-5 left-6 z-10" />
-      <form onSubmit={handleSubmit(onValid)} className="w-full">
+      <form role="form" onSubmit={handleSubmit(onValid)} className="w-full">
         <input
           {...register("search", { required: true })}
           name="search"

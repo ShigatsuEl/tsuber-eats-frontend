@@ -3,7 +3,7 @@ describe("Log In", () => {
     cy.visit("/").title().should("eq", "Login | Tsuber Eats");
   });
 
-  it("can see email | password validation errors", () => {
+  it("should see email | password validation errors", () => {
     cy.visit("/");
     cy.findByPlaceholderText(/email/i).type("errorEmail");
     cy.findByRole("alert").should(
@@ -27,9 +27,5 @@ describe("Log In", () => {
       .should("not.have.class", "pointer-events.none")
       .click();
     cy.window().its("localStorage.tsuber-token").should("be.a", "string");
-  });
-
-  it("should sign up", () => {
-    cy.visit("/create-account");
   });
 });

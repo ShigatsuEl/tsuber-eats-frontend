@@ -17,6 +17,22 @@ describe("Create Account", () => {
   });
 
   it("should create account and log in", () => {
+    cy.intercept("http://localhost:4000/graphql", (req) => {
+      const { operationName } = req.body;
+      if (operationName && operationName === "CreateAccountMutation") {
+        req.reply((res) => {
+          res.send({
+            data: {
+              createAccount: {
+                ok: true,
+                error: null,
+                __typename: "CreateAccountOutput",
+              },
+            },
+          });
+        });
+      }
+    });
     cy.visit("/create-account");
     cy.findByPlaceholderText(/email/i).type("admintest@gmail.com");
     cy.findByPlaceholderText(/password/i).type("admin");

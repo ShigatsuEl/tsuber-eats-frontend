@@ -3,22 +3,33 @@ describe("Log In", () => {
     cy.visit("/").title().should("eq", "Login | Tsuber Eats");
   });
 
-  it("can fill out the form", () => {
-    cy.visit("/")
-      .findByPlaceholderText(/email/i)
-      .type("adminclient@gmail.com")
-      .findByPlaceholderText(/password/i)
-      .type("admin")
-      .findByRole("button")
-      .should("not.have.class", "pointer-events.none");
-    // to do(Log in)
+  it("can see email | password validation errors", () => {
+    cy.visit("/");
+    cy.findByPlaceholderText(/email/i).type("errorEmail");
+    cy.findByRole("alert").should(
+      "have.text",
+      "Must be entered in email format"
+    );
+    cy.findByPlaceholderText(/email/i).clear();
+    cy.findByRole("alert").should("have.text", "Email is required");
+    cy.findByPlaceholderText(/email/i).type("adminclient@gmail.com");
+    cy.findByPlaceholderText(/password/i)
+      .type("error")
+      .clear();
+    cy.findByRole("alert").should("have.text", "Password is required");
   });
 
-  it("can see email | password validation errors", () => {
-    cy.visit("/")
-      .findByPlaceholderText(/email/i)
-      .type("errorEmail")
-      .findByRole("button")
-      .should("have.text", "Must be entered in email format");
+  it("should log in", () => {
+    cy.visit("/");
+    cy.findByPlaceholderText(/email/i).type("adminclient@gmail.com");
+    cy.findByPlaceholderText(/password/i).type("admin");
+    cy.findByRole("button")
+      .should("not.have.class", "pointer-events.none")
+      .click();
+    cy.window().its("localStorage.tsuber-token").should("be.a", "string");
+  });
+
+  it("should sign up", () => {
+    cy.visit("/create-account");
   });
 });

@@ -20,12 +20,6 @@ describe("Log In", () => {
   });
 
   it("should log in", () => {
-    cy.visit("/");
-    cy.findByPlaceholderText(/email/i).type("adminclient@gmail.com");
-    cy.findByPlaceholderText(/password/i).type("admin");
-    cy.findByRole("button")
-      .should("not.have.class", "pointer-events.none")
-      .click();
-    cy.window().its("localStorage.tsuber-token").should("be.a", "string");
+    cy.login("adminclient@gmail.com", "admin");
   });
 });

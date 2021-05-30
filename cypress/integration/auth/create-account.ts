@@ -38,6 +38,6 @@ describe("Create Account", () => {
     cy.findByPlaceholderText(/password/i).type("admin");
     cy.findByRole("button").click();
     cy.wait(1000);
-    cy.window().its("localStorage.tsuber-token").should("be.a", "string");
+    cy.assertLoggedIn();
   });
 });

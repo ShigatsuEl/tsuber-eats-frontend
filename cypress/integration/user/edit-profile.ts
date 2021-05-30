@@ -1,6 +1,6 @@
 describe("Edit Profile", () => {
   beforeEach(() => {
-    cy.login("adminclient@gmail.com", "admin");
+    cy.login("admintest@gmail.com", "admin");
   });
 
   it("should go to /edit-profile by using the header", () => {
@@ -12,6 +12,13 @@ describe("Edit Profile", () => {
   });
 
   it("should change email", () => {
+    cy.intercept("POST", "http://localhost:4000/graphql", (req) => {
+      if (req.body?.operationName === "EditUserProfileMutation") {
+        // @ts-ignore
+        req.body?.variables?.editUserProfileInput?.email =
+          "admintest@gmail.com";
+      }
+    });
     cy.visit("/profile/edit");
     cy.findByPlaceholderText(/email/i).clear().type("test@gmail.com");
     cy.findAllByRole("button").eq(1).click();

@@ -12,7 +12,7 @@ describe("Log In", () => {
     );
     cy.findByPlaceholderText(/email/i).clear();
     cy.findByRole("alert").should("have.text", "Email is required");
-    cy.findByPlaceholderText(/email/i).type("adminclient@gmail.com");
+    cy.findByPlaceholderText(/email/i).type("admintest@gmail.com");
     cy.findByPlaceholderText(/password/i)
       .type("error")
       .clear();
@@ -20,6 +20,6 @@ describe("Log In", () => {
   });
 
   it("should log in", () => {
-    cy.login("adminclient@gmail.com", "admin");
+    cy.login("admintest@gmail.com", "admin");
   });
 });

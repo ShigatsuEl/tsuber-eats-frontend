@@ -4,6 +4,7 @@ import { useLoginUser } from "../../hooks/useLoginUser";
 
 export const MyProfile = () => {
   const { data } = useLoginUser();
+
   return (
     <div className="h-except-header flex flex-col items-center">
       <Helmet>
@@ -18,13 +19,22 @@ export const MyProfile = () => {
             <div className="font-medium text-xl mr-5 mb-3 p-2">Role</div>
           </div>
           <div className="flex flex-col">
-            <div className="mb-3 p-2 font-medium text-xl bg-gray-200 bg-opacity-60">
+            <div
+              data-testid="my-email"
+              className="mb-3 p-2 font-medium text-xl bg-gray-200 bg-opacity-60"
+            >
               {data?.loginUser.email}
             </div>
-            <div className="mb-3 p-2 font-medium text-xl bg-gray-200 bg-opacity-60">
+            <div
+              data-testid="my-verified"
+              className="mb-3 p-2 font-medium text-xl bg-gray-200 bg-opacity-60"
+            >
               {data?.loginUser.verified ? "O" : "X"}
             </div>
-            <div className="mb-3 p-2 font-medium text-xl bg-gray-200 bg-opacity-60">
+            <div
+              data-testid="my-role"
+              className="mb-3 p-2 font-medium text-xl bg-gray-200 bg-opacity-60"
+            >
               {data?.loginUser.role}
             </div>
           </div>

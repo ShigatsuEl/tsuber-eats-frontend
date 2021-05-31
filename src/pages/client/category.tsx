@@ -12,7 +12,7 @@ import {
   GetCategoryQueryVariables,
 } from "../../__generated__/GetCategoryQuery";
 
-const GET_CATEGORY_QUERY = gql`
+export const GET_CATEGORY_QUERY = gql`
   query GetCategoryQuery($input: GetCategoryInput!) {
     getCategory(input: $input) {
       ok

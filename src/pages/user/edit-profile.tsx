@@ -12,7 +12,7 @@ import {
   EditUserProfileMutationVariables,
 } from "../../__generated__/EditUserProfileMutation";
 
-const EDIT_USER_PROFILE_MUTATION = gql`
+export const EDIT_USER_PROFILE_MUTATION = gql`
   mutation EditUserProfileMutation(
     $editUserProfileInput: EditUserProfileInput!
   ) {
@@ -125,9 +125,6 @@ export const EditProfile = () => {
           type="password"
           placeholder="Password"
         />
-        {errors.password?.message && (
-          <FormError errorMessage={errors.password.message} />
-        )}
         <Button
           loading={loading}
           canClick={isValid}

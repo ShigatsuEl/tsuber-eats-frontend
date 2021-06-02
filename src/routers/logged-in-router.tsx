@@ -13,35 +13,54 @@ import { Restaurant } from "../pages/client/restaurant";
 import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
 import { LogOut } from "../pages/logout";
+import { MyRestaurants } from "../pages/owner/my-restaurants";
 import { ConfirmEmail } from "../pages/user/confirm-email";
 import { EditProfile } from "../pages/user/edit-profile";
 import { MyProfile } from "../pages/user/my-profile";
 
+const UserRouter = [
+  {
+    path: "/confirm",
+    component: <ConfirmEmail />,
+  },
+  {
+    path: "/logout",
+    component: <LogOut />,
+  },
+  {
+    path: "/profile/me",
+    component: <MyProfile />,
+  },
+  {
+    path: "/profile/edit",
+    component: <EditProfile />,
+  },
+];
+
 const ClientRouter = [
-  <Route key={1} path="/" exact>
-    <Restaurants />
-  </Route>,
-  <Route key={2} path="/confirm">
-    <ConfirmEmail />
-  </Route>,
-  <Route key={3} path="/logout">
-    <LogOut />
-  </Route>,
-  <Route key={4} path="/search">
-    <Search />
-  </Route>,
-  <Route key={5} path="/profile/me">
-    <MyProfile />
-  </Route>,
-  <Route key={6} path="/profile/edit">
-    <EditProfile />
-  </Route>,
-  <Route key={7} path="/category/:slug">
-    <Category />
-  </Route>,
-  <Route key={8} path="/restaurant/:id">
-    <Restaurant />
-  </Route>,
+  {
+    path: "/",
+    component: <Restaurants />,
+  },
+  {
+    path: "/search",
+    component: <Search />,
+  },
+  {
+    path: "/category/:slug",
+    component: <Category />,
+  },
+  {
+    path: "/restaurant/:id",
+    component: <Restaurant />,
+  },
+];
+
+const OwnerRouter = [
+  {
+    path: "/",
+    component: <MyRestaurants />,
+  },
 ];
 
 export const LoggedInRouter = () => {
@@ -58,7 +77,23 @@ export const LoggedInRouter = () => {
     <Router>
       <Header />
       <Switch>
-        {data.loginUser.role === "Client" && ClientRouter}
+        {UserRouter.map((route) => (
+          <Route key={route.path} path={route.path}>
+            {route.component}
+          </Route>
+        ))}
+        {data.loginUser.role === "Client" &&
+          ClientRouter.map((route) => (
+            <Route key={route.path} path={route.path}>
+              {route.component}
+            </Route>
+          ))}
+        {data.loginUser.role === "Owner" &&
+          OwnerRouter.map((route) => (
+            <Route key={route.path} path={route.path}>
+              {route.component}
+            </Route>
+          ))}
         <Redirect to="/" />
       </Switch>
     </Router>

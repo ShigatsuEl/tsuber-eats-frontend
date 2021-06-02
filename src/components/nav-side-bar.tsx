@@ -47,10 +47,15 @@ export const NavSideBar: React.FC<INavSideBarProps> = ({ data }) => {
           isSidebarOpen ? "ease-out translate-x-0" : "ease-in -translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-center mt-2 text-center py-6">
-          <span className="mx-2 text-2xl font-semibold text-black">
+        <div className="flex items-center justify-center mt-2 py-6">
+          <div className="mx-2 text-2xl font-semibold text-black">
             <Logo where={LogoLocation.Header} />
-          </span>
+          </div>
+          <FontAwesomeIcon
+            icon={faBars}
+            className="absolute top-9 right-6 text-lg cursor-pointer sm:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
         </div>
         {!data?.loginUser.verified && (
           <div

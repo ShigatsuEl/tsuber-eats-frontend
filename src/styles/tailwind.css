@@ -6,7 +6,7 @@
 }
 
 .side-bar {
-  @apply fixed inset-y-0 left-0 z-30 overflow-y-auto transition duration-300 ease-out transform translate-x-0 w-64 border-r-2 bg-white;
+  @apply fixed inset-y-0 left-0 z-30 overflow-y-auto transition duration-300 ease-out transform translate-x-0 w-full border-r-2 bg-white sm:w-64;
 }
 
 .side-bar-overlay {

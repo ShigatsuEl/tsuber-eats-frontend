@@ -1,5 +1,9 @@
 /* eslint-disable jsx-a11y/no-redundant-roles */
-import { faBars, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faSignOutAlt,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { Navigation } from "react-minimal-side-navigation";
@@ -90,6 +94,22 @@ export const NavSideBar: React.FC<INavSideBarProps> = ({ data }) => {
             },
           ]}
         />
+        <div className="absolute bottom-0 w-full my-8">
+          <Navigation
+            activeItemId={location.pathname}
+            items={[
+              {
+                title: "Log Out",
+                itemId: "/logout",
+                elemBefore: () => <FontAwesomeIcon icon={faSignOutAlt} />,
+              },
+            ]}
+            onSelect={({ itemId }) => {
+              history.push(itemId);
+              setIsSidebarOpen(false);
+            }}
+          />
+        </div>
       </div>
     </>
   );

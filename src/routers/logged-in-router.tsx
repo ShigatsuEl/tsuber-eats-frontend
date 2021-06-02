@@ -13,6 +13,7 @@ import { Restaurant } from "../pages/client/restaurant";
 import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
 import { LogOut } from "../pages/logout";
+import { CreateRestaurant } from "../pages/owner/create-restaurant";
 import { MyRestaurants } from "../pages/owner/my-restaurants";
 import { ConfirmEmail } from "../pages/user/confirm-email";
 import { EditProfile } from "../pages/user/edit-profile";
@@ -61,6 +62,10 @@ const OwnerRouter = [
     path: "/",
     component: <MyRestaurants />,
   },
+  {
+    path: "/restaurant/create",
+    component: <CreateRestaurant />,
+  },
 ];
 
 export const LoggedInRouter = () => {
@@ -78,19 +83,19 @@ export const LoggedInRouter = () => {
       <Header />
       <Switch>
         {UserRouter.map((route) => (
-          <Route key={route.path} path={route.path}>
+          <Route key={route.path} path={route.path} exact>
             {route.component}
           </Route>
         ))}
         {data.loginUser.role === "Client" &&
           ClientRouter.map((route) => (
-            <Route key={route.path} path={route.path}>
+            <Route key={route.path} path={route.path} exact>
               {route.component}
             </Route>
           ))}
         {data.loginUser.role === "Owner" &&
           OwnerRouter.map((route) => (
-            <Route key={route.path} path={route.path}>
+            <Route key={route.path} path={route.path} exact>
               {route.component}
             </Route>
           ))}

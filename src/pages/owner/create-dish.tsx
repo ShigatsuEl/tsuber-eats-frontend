@@ -29,7 +29,7 @@ interface IForm {
   name: string;
   price: string;
   description: string;
-  option: { name: string; extra: string }[];
+  [key: string]: string;
 }
 
 export const CreateDish = () => {
@@ -50,32 +50,38 @@ export const CreateDish = () => {
       },
     ],
   });
-  const [optionNumber, setOptionNumber] = useState(0);
+  const [optionNumber, setOptionNumber] = useState<number[]>([]);
 
   const onValid = () => {
     const { name, price, description, ...rest } = getValues();
     console.log(rest);
-    /* createMutation({
+    const optionObject = optionNumber.map((id) => ({
+      name: rest[`${id}-option-name`],
+      extra: +rest[`${id}-option-extra`],
+    }));
+    console.log(optionObject);
+    createMutation({
       variables: {
         input: {
           restaurantId: +id,
           name,
           price: +price,
           description,
+          options: optionObject,
         },
       },
     });
-    history.goBack(); */
+    history.goBack();
   };
 
   const onAddDishOptionClick = () => {
-    setOptionNumber((current) => current + 1);
+    setOptionNumber((current) => [Date.now(), ...current]);
   };
 
-  const onRemoveOptionClick = (id: number) => {
-    setOptionNumber((current) => current - 1);
-    // @ts-ignore
-    setValue(`option.${id}`, { name: "", extra: "" });
+  const onRemoveOptionClick = (idToDelete: number) => {
+    setOptionNumber((current) => current.filter((id) => id !== idToDelete));
+    setValue(`${idToDelete}-option-name`, "");
+    setValue(`${idToDelete}-option-extra`, "");
   };
 
   return (
@@ -126,34 +132,30 @@ export const CreateDish = () => {
         )}
         <hr className="mt-1 mb-5 w-full max-w-screen-sm" />
         <div>
-          <span
-            onClick={onAddDishOptionClick}
-            className="inline-block mb-5 p-2 bg-lime-600 text-white"
-          >
+          <span onClick={onAddDishOptionClick} className="btn mb-5">
             Add Dish Option
           </span>
         </div>
-        {optionNumber !== 0 &&
-          Array.from(new Array(optionNumber)).map((_, index) => (
-            <div key={index} className="mb-5">
+        {optionNumber.length !== 0 &&
+          optionNumber.map((id) => (
+            <div key={id} className="mb-5">
               <input
-                // @ts-ignore
-                {...register(`option.${index}.name`)}
+                {...register(`${id}-option-name`)}
                 className="input mr-5"
-                name={`option.${index}.name`}
+                name={`${id}-option-name`}
                 type="text"
                 placeholder="Option Name"
               />
               <input
-                // @ts-ignore
-                {...register(`option.${index}.extra`)}
-                className="input"
-                name={`option.${index}.extra`}
+                {...register(`${id}-option-extra`)}
+                className="input mr-5"
+                name={`${id}-option-extra`}
                 type="number"
                 min={0}
+                defaultValue={0}
                 placeholder="Option Extra"
               />
-              <span onClick={() => onRemoveOptionClick(index)}>
+              <span onClick={() => onRemoveOptionClick(id)} className="btn">
                 Remove Button
               </span>
             </div>

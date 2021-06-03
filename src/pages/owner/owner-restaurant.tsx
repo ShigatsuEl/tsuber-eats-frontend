@@ -44,7 +44,7 @@ export const OwnerRestaurant = () => {
       },
     },
   });
-
+  console.log(data);
   return (
     <React.Fragment>
       {loading ? (
@@ -82,14 +82,19 @@ export const OwnerRestaurant = () => {
             <h2 className="text-4xl font-medium mb-10">
               {data?.getOwnerRestaurant.restaurant?.name || "Loading..."}
             </h2>
-            <Link to={``} className=" mr-8 text-white bg-gray-800 py-3 px-10">
+            <Link
+              to={`/restaurant/${id}/dish/create`}
+              className=" mr-8 text-white bg-gray-800 py-3 px-10"
+            >
               Add Dish &rarr;
             </Link>
             <Link to={``} className=" text-white bg-lime-600 py-3 px-10">
               Buy Promotion &rarr;
             </Link>
             <div className="mt-10">
-              {data?.getOwnerRestaurant.restaurant?.menu.length !== 0 && null}
+              {data?.getOwnerRestaurant.restaurant?.menu.length !== 0 && (
+                <div>Dish is ready</div>
+              )}
             </div>
           </div>
         </div>

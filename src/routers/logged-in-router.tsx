@@ -13,7 +13,9 @@ import { Restaurant } from "../pages/client/restaurant";
 import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
 import { LogOut } from "../pages/logout";
+import { CreateDish } from "../pages/owner/create-dish";
 import { CreateRestaurant } from "../pages/owner/create-restaurant";
+import { OwnerRestaurant } from "../pages/owner/owner-restaurant";
 import { OwnerRestaurants } from "../pages/owner/owner-restaurants";
 import { ConfirmEmail } from "../pages/user/confirm-email";
 import { EditProfile } from "../pages/user/edit-profile";
@@ -65,6 +67,14 @@ const OwnerRouter = [
   {
     path: "/restaurant/create",
     component: <CreateRestaurant />,
+  },
+  {
+    path: "/restaurant/:id",
+    component: <OwnerRestaurant />,
+  },
+  {
+    path: "/restaurant/:id/dish/create",
+    component: <CreateDish />,
   },
 ];
 

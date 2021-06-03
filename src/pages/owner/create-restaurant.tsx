@@ -1,14 +1,16 @@
-import { useMutation } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { useForm } from "react-hook-form";
+import { useHistory } from "react-router";
 import { Button } from "../../components/button";
 import { FormError } from "../../components/form-error";
 import {
   CreateRestaurantMutation,
   CreateRestaurantMutationVariables,
 } from "../../__generated__/CreateRestaurantMutation";
+import { GET_MY_RESTAURANTS_QUERY } from "./my-restaurants";
 
 const CREATE_RESTAURANT_MUATION = gql`
   mutation CreateRestaurantMutation($input: CreateRestaurantInput!) {
@@ -28,6 +30,8 @@ interface IFormProps {
 }
 
 export const CreateRestaurant = () => {
+  const client = useApolloClient();
+  const history = useHistory();
   const [createRestaurant, { data }] = useMutation<
     CreateRestaurantMutation,
     CreateRestaurantMutationVariables
@@ -38,6 +42,7 @@ export const CreateRestaurant = () => {
     mode: "onChange",
   });
   const [uploading, setUploading] = useState(false);
+  const [imgUrl, setImgUrl] = useState("");
 
   const onValid = async () => {
     try {
@@ -46,12 +51,14 @@ export const CreateRestaurant = () => {
       const file = coverImg[0];
       const formBody = new FormData();
       formBody.append("file", file);
-      const { url } = await (
+      let { url } = await (
         await fetch("http://localhost:4000/uploads/", {
           method: "POST",
           body: formBody,
         })
       ).json();
+      url = url.replace(/ /g, "+");
+
       createRestaurant({
         variables: {
           input: {
@@ -62,6 +69,7 @@ export const CreateRestaurant = () => {
           },
         },
       });
+      setImgUrl(url);
     } catch (error) {
       console.log(error);
     }
@@ -73,7 +81,31 @@ export const CreateRestaurant = () => {
     } = data;
     if (ok) {
       setUploading(false);
-      // fake
+      const { name, address, categoryName } = getValues();
+      // API를 한번 더 요청하지 않고 CACHE에 있는 data를 업데이트하여 앱을 최적화 한다
+      // 주의할 점은 반드시 My Restaurants Page에 접속해야 Cache에 getMyRestaurants가 저장된다는 것
+      const queryResult = client.readQuery({ query: GET_MY_RESTAURANTS_QUERY });
+      client.writeQuery({
+        query: GET_MY_RESTAURANTS_QUERY,
+        data: {
+          getMyRestaurants: {
+            ...queryResult.getMyRestaurants,
+            restaurants: [
+              {
+                address,
+                category: { name: categoryName, __typename: "Category" },
+                coverImg: imgUrl,
+                id: restaurantId,
+                isPromoted: false,
+                name,
+                __typename: "Restaurant",
+              },
+              ...queryResult.getMyRestaurants.restaurants,
+            ],
+          },
+        },
+      });
+      history.push("/");
     }
   }
 

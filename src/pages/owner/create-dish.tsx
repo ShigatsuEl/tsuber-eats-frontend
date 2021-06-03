@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router";
@@ -25,18 +25,20 @@ interface IParams {
   id: string;
 }
 
-interface IFormPros {
+interface IForm {
   name: string;
   price: string;
   description: string;
+  option: { name: string; extra: string }[];
 }
 
 export const CreateDish = () => {
   const { id } = useParams<IParams>();
   const history = useHistory();
-  const { register, getValues, handleSubmit, formState } = useForm<IFormPros>({
-    mode: "onChange",
-  });
+  const { register, getValues, handleSubmit, formState, setValue } =
+    useForm<IForm>({
+      mode: "onChange",
+    });
   const [createMutation, { data, loading }] = useMutation<
     CreateDishMutation,
     CreateDishMutationVariables
@@ -48,11 +50,12 @@ export const CreateDish = () => {
       },
     ],
   });
+  const [optionNumber, setOptionNumber] = useState(0);
 
   const onValid = () => {
-    const { name, price, description } = getValues();
-    console.log(name, price, description);
-    createMutation({
+    const { name, price, description, ...rest } = getValues();
+    console.log(rest);
+    /* createMutation({
       variables: {
         input: {
           restaurantId: +id,
@@ -62,7 +65,17 @@ export const CreateDish = () => {
         },
       },
     });
-    history.goBack();
+    history.goBack(); */
+  };
+
+  const onAddDishOptionClick = () => {
+    setOptionNumber((current) => current + 1);
+  };
+
+  const onRemoveOptionClick = (id: number) => {
+    setOptionNumber((current) => current - 1);
+    // @ts-ignore
+    setValue(`option.${id}`, { name: "", extra: "" });
   };
 
   return (
@@ -70,7 +83,7 @@ export const CreateDish = () => {
       <HelmetProvider>
         <title>Create Dish | Tsuber Eats</title>
       </HelmetProvider>
-      <h1 className="mt-10 mb-5 font-semibold text-3xl">Create Restaurant</h1>
+      <h1 className="mb-5 font-semibold text-3xl">Create Restaurant</h1>
       <form
         onSubmit={handleSubmit(onValid)}
         className="grid gap-3 mt-5 mb-3 w-full max-w-screen-sm"
@@ -111,6 +124,40 @@ export const CreateDish = () => {
         {formState.errors?.description?.message && (
           <FormError errorMessage={formState.errors.description.message} />
         )}
+        <hr className="mt-1 mb-5 w-full max-w-screen-sm" />
+        <div>
+          <span
+            onClick={onAddDishOptionClick}
+            className="inline-block mb-5 p-2 bg-lime-600 text-white"
+          >
+            Add Dish Option
+          </span>
+        </div>
+        {optionNumber !== 0 &&
+          Array.from(new Array(optionNumber)).map((_, index) => (
+            <div key={index} className="mb-5">
+              <input
+                // @ts-ignore
+                {...register(`option.${index}.name`)}
+                className="input mr-5"
+                name={`option.${index}.name`}
+                type="text"
+                placeholder="Option Name"
+              />
+              <input
+                // @ts-ignore
+                {...register(`option.${index}.extra`)}
+                className="input"
+                name={`option.${index}.extra`}
+                type="number"
+                min={0}
+                placeholder="Option Extra"
+              />
+              <span onClick={() => onRemoveOptionClick(index)}>
+                Remove Button
+              </span>
+            </div>
+          ))}
         <Button
           canClick={formState.isValid}
           loading={loading}

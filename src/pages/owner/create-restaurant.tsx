@@ -10,7 +10,7 @@ import {
   CreateRestaurantMutation,
   CreateRestaurantMutationVariables,
 } from "../../__generated__/CreateRestaurantMutation";
-import { GET_MY_RESTAURANTS_QUERY } from "./my-restaurants";
+import { GET_OWNER_RESTAURANTS_QUERY } from "./owner-restaurants";
 
 const CREATE_RESTAURANT_MUATION = gql`
   mutation CreateRestaurantMutation($input: CreateRestaurantInput!) {
@@ -84,12 +84,14 @@ export const CreateRestaurant = () => {
       const { name, address, categoryName } = getValues();
       // API를 한번 더 요청하지 않고 CACHE에 있는 data를 업데이트하여 앱을 최적화 한다
       // 주의할 점은 반드시 My Restaurants Page에 접속해야 Cache에 getMyRestaurants가 저장된다는 것
-      const queryResult = client.readQuery({ query: GET_MY_RESTAURANTS_QUERY });
+      const queryResult = client.readQuery({
+        query: GET_OWNER_RESTAURANTS_QUERY,
+      });
       client.writeQuery({
-        query: GET_MY_RESTAURANTS_QUERY,
+        query: GET_OWNER_RESTAURANTS_QUERY,
         data: {
-          getMyRestaurants: {
-            ...queryResult.getMyRestaurants,
+          getOwnerRestaurants: {
+            ...queryResult.getOwnerRestaurants,
             restaurants: [
               {
                 address,
@@ -100,7 +102,7 @@ export const CreateRestaurant = () => {
                 name,
                 __typename: "Restaurant",
               },
-              ...queryResult.getMyRestaurants.restaurants,
+              ...queryResult.getOwnerRestaurants.restaurants,
             ],
           },
         },

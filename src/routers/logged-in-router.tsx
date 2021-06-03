@@ -14,7 +14,7 @@ import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
 import { LogOut } from "../pages/logout";
 import { CreateRestaurant } from "../pages/owner/create-restaurant";
-import { MyRestaurants } from "../pages/owner/my-restaurants";
+import { OwnerRestaurants } from "../pages/owner/owner-restaurants";
 import { ConfirmEmail } from "../pages/user/confirm-email";
 import { EditProfile } from "../pages/user/edit-profile";
 import { MyProfile } from "../pages/user/my-profile";
@@ -60,7 +60,7 @@ const ClientRouter = [
 const OwnerRouter = [
   {
     path: "/",
-    component: <MyRestaurants />,
+    component: <OwnerRestaurants />,
   },
   {
     path: "/restaurant/create",

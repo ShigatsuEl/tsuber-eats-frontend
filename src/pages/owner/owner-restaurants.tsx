@@ -5,11 +5,11 @@ import { HelmetProvider } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { RestaurantContainer } from "../../components/restaurant-container";
 import { RESTAURANT_FRAGMENT } from "../../fragments";
-import { GetMyRestaurantsQuery } from "../../__generated__/GetMyRestaurantsQuery";
+import { GetOwnerRestaurantsQuery } from "../../__generated__/GetOwnerRestaurantsQuery";
 
-export const GET_MY_RESTAURANTS_QUERY = gql`
-  query GetMyRestaurantsQuery {
-    getMyRestaurants {
+export const GET_OWNER_RESTAURANTS_QUERY = gql`
+  query GetOwnerRestaurantsQuery {
+    getOwnerRestaurants {
       ok
       error
       restaurants {
@@ -20,8 +20,10 @@ export const GET_MY_RESTAURANTS_QUERY = gql`
   ${RESTAURANT_FRAGMENT}
 `;
 
-export const MyRestaurants = () => {
-  const { data } = useQuery<GetMyRestaurantsQuery>(GET_MY_RESTAURANTS_QUERY);
+export const OwnerRestaurants = () => {
+  const { data } = useQuery<GetOwnerRestaurantsQuery>(
+    GET_OWNER_RESTAURANTS_QUERY
+  );
 
   return (
     <div>
@@ -35,10 +37,10 @@ export const MyRestaurants = () => {
             Create Restaurant &rarr;
           </span>
         </Link>
-        {data?.getMyRestaurants.ok &&
-          data.getMyRestaurants.restaurants.length !== 0 && (
+        {data?.getOwnerRestaurants.ok &&
+          data.getOwnerRestaurants.restaurants.length !== 0 && (
             <div className="grid grid-cols-1 gap-6 mb-5 sm:grid-cols-2 lg:grid-cols-3">
-              {data?.getMyRestaurants.restaurants?.map((restaurant) => (
+              {data?.getOwnerRestaurants.restaurants?.map((restaurant) => (
                 <RestaurantContainer
                   key={restaurant.id + ""}
                   id={restaurant.id + ""}

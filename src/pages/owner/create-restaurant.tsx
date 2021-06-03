@@ -15,6 +15,7 @@ const CREATE_RESTAURANT_MUATION = gql`
     createRestaurant(input: $input) {
       ok
       error
+      restaurantId
     }
   }
 `;
@@ -68,9 +69,12 @@ export const CreateRestaurant = () => {
 
   function onCompleted(data: CreateRestaurantMutation) {
     const {
-      createRestaurant: { ok },
+      createRestaurant: { ok, restaurantId },
     } = data;
-    if (ok) setUploading(false);
+    if (ok) {
+      setUploading(false);
+      // fake
+    }
   }
 
   return (

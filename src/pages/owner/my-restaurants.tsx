@@ -1,6 +1,6 @@
-import { useQuery } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useEffect } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { RestaurantContainer } from "../../components/restaurant-container";
@@ -22,7 +22,22 @@ export const GET_MY_RESTAURANTS_QUERY = gql`
 
 export const MyRestaurants = () => {
   const { data } = useQuery<GetMyRestaurantsQuery>(GET_MY_RESTAURANTS_QUERY);
-  console.log(data);
+  const client = useApolloClient();
+
+  useEffect(() => {
+    setTimeout(() => {
+      const queryResult = client.readQuery({ query: GET_MY_RESTAURANTS_QUERY });
+      console.log(queryResult);
+      client.writeQuery({
+        query: GET_MY_RESTAURANTS_QUERY,
+        data: {
+          ...queryResult,
+          restaurants: [1, 2, 3, 4],
+        },
+      });
+    }, 8000);
+  }, []);
+
   return (
     <div>
       <HelmetProvider>
@@ -31,7 +46,7 @@ export const MyRestaurants = () => {
       <div className="mx-10">
         <h2 className="mb-5 font-semibold text-3xl">My Restaurants</h2>
         {data?.getMyRestaurants.ok &&
-        data.getMyRestaurants.restaurants.length !== 0 ? (
+        data.getMyRestaurants.restaurants.length === 0 ? (
           <Link to="/restaurant/create">
             <span className="link mb-5 font-medium text-base">
               Create Restaurant &rarr;

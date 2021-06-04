@@ -4,6 +4,7 @@ import React from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
+import { VictoryAxis, VictoryBar, VictoryChart } from "victory";
 import { Dish } from "../../components/dish";
 import Loading from "../../components/loading";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
@@ -69,7 +70,7 @@ export const OwnerRestaurant = () => {
                 data-testid="restaurant-name"
                 className="pb-2 font-semibold text-4xl"
               >
-                {data?.getOwnerRestaurant.restaurant?.name}
+                {data?.getOwnerRestaurant.restaurant?.name || "Loading..."}
               </h4>
               <h5
                 data-testid="restuarant-address"
@@ -80,9 +81,6 @@ export const OwnerRestaurant = () => {
             </div>
           </div>
           <div className="mt-10 mx-10">
-            <h2 className="text-4xl font-medium mb-10">
-              {data?.getOwnerRestaurant.restaurant?.name || "Loading..."}
-            </h2>
             <Link
               to={`/restaurant/${id}/dish/create`}
               className=" mr-8 text-white bg-gray-800 py-3 px-10"
@@ -107,6 +105,27 @@ export const OwnerRestaurant = () => {
                   )}
                 </div>
               )}
+            </div>
+            <div className="mt-20">
+              <h4 className="font-semibold text-center text-3xl">Sales</h4>
+              <div className="mx-auto max-w-screen-sm w-full">
+                <VictoryChart domainPadding={20}>
+                  <VictoryAxis
+                    label="Amount of Money"
+                    dependentAxis
+                    tickValues={[20, 30, 40, 50, 60]}
+                  />
+                  <VictoryAxis label="Days of Life" />
+                  <VictoryBar
+                    data={[
+                      { x: 10, y: 20 },
+                      { x: 20, y: 5 },
+                      { x: 35, y: 55 },
+                      { x: 45, y: 99 },
+                    ]}
+                  />
+                </VictoryChart>
+              </div>
             </div>
           </div>
         </div>

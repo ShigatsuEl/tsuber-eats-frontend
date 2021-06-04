@@ -50,14 +50,16 @@ export const CreateDish = () => {
       },
     ],
   });
-  const [optionNumber, setOptionNumber] = useState<number[]>([]);
+  const [options, setOptions] = useState<{ id: number; subOption: number }[]>(
+    []
+  );
 
   const onValid = () => {
     const { name, price, description, ...rest } = getValues();
     console.log(rest);
-    const optionObject = optionNumber.map((id) => ({
-      name: rest[`${id}-option-name`],
-      extra: +rest[`${id}-option-extra`],
+    const optionObject = options.map((option) => ({
+      name: rest[`${option.id}-option-name`],
+      extra: +rest[`${option.id}-option-extra`],
     }));
     console.log(optionObject);
     createMutation({
@@ -75,11 +77,15 @@ export const CreateDish = () => {
   };
 
   const onAddDishOptionClick = () => {
-    setOptionNumber((current) => [Date.now(), ...current]);
+    setOptions((current) => [{ id: Date.now(), subOption: 0 }, ...current]);
   };
 
+  const onAddSubOptionClick = () => {};
+
   const onRemoveOptionClick = (idToDelete: number) => {
-    setOptionNumber((current) => current.filter((id) => id !== idToDelete));
+    setOptions((current) =>
+      current.filter((option) => option.id !== idToDelete)
+    );
     setValue(`${idToDelete}-option-name`, "");
     setValue(`${idToDelete}-option-extra`, "");
   };
@@ -136,28 +142,38 @@ export const CreateDish = () => {
             Add Dish Option
           </span>
         </div>
-        {optionNumber.length !== 0 &&
-          optionNumber.map((id) => (
-            <div key={id} className="mb-5">
-              <input
-                {...register(`${id}-option-name`)}
-                className="input mr-5"
-                name={`${id}-option-name`}
-                type="text"
-                placeholder="Option Name"
-              />
-              <input
-                {...register(`${id}-option-extra`)}
-                className="input mr-5"
-                name={`${id}-option-extra`}
-                type="number"
-                min={0}
-                defaultValue={0}
-                placeholder="Option Extra"
-              />
-              <span onClick={() => onRemoveOptionClick(id)} className="btn">
-                Remove Button
-              </span>
+        {options.length !== 0 &&
+          options.map((option) => (
+            <div key={option.id} className="mb-5">
+              <div className="flex justify-between mb-2 w-full">
+                <input
+                  {...register(`${option.id}-option-name`)}
+                  className="input w-space-1/2"
+                  name={`${option.id}-option-name`}
+                  type="text"
+                  placeholder="Option Name"
+                />
+                <input
+                  {...register(`${option.id}-option-extra`, { min: 0 })}
+                  className="input w-space-1/2"
+                  name={`${option.id}-option-extra`}
+                  type="number"
+                  min={0}
+                  defaultValue={0}
+                  placeholder="Option Extra"
+                />
+              </div>
+              <div className="flex justify-end">
+                <span onClick={() => onAddSubOptionClick()} className="btn">
+                  Add Sub Option
+                </span>
+                <span
+                  onClick={() => onRemoveOptionClick(option.id)}
+                  className="btn ml-5"
+                >
+                  Remove Option
+                </span>
+              </div>
             </div>
           ))}
         <Button

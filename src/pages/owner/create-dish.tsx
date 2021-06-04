@@ -50,18 +50,20 @@ export const CreateDish = () => {
       },
     ],
   });
-  const [options, setOptions] = useState<{ id: number; subOption: number }[]>(
-    []
-  );
+  const [options, setOptions] = useState<
+    { id: number; subOptions: number[] }[]
+  >([]);
 
   const onValid = () => {
     const { name, price, description, ...rest } = getValues();
-    console.log(rest);
     const optionObject = options.map((option) => ({
       name: rest[`${option.id}-option-name`],
       extra: +rest[`${option.id}-option-extra`],
+      choices: option.subOptions.map((subOption) => ({
+        name: rest[`${subOption}-option-choice-name`],
+        extra: +rest[`${subOption}-option-choice-extra`],
+      })),
     }));
-    console.log(optionObject);
     createMutation({
       variables: {
         input: {
@@ -77,17 +79,55 @@ export const CreateDish = () => {
   };
 
   const onAddDishOptionClick = () => {
-    setOptions((current) => [{ id: Date.now(), subOption: 0 }, ...current]);
+    setOptions((current) => [{ id: Date.now(), subOptions: [] }, ...current]);
   };
 
-  const onAddSubOptionClick = () => {};
+  const onAddSubOptionClick = (id: number) => {
+    setOptions((current) =>
+      current.map((option) => {
+        if (option.id === id) {
+          return {
+            id: option.id,
+            subOptions: [Date.now(), ...option.subOptions],
+          };
+        }
+        return option;
+      })
+    );
+  };
 
   const onRemoveOptionClick = (idToDelete: number) => {
     setOptions((current) =>
-      current.filter((option) => option.id !== idToDelete)
+      // 삭제하는 옵션 중 서브 옵션이 있다면 서브옵션까지 전부 값 초기화
+      current
+        .map((option) => {
+          if (option.id === idToDelete) {
+            option.subOptions.map((subOption) => {
+              setValue(`${subOption}-option-choice-name`, "");
+              setValue(`${subOption}-option-choice-name`, "");
+              return subOption;
+            });
+          }
+          return option;
+        })
+        .filter((option) => option.id !== idToDelete)
     );
     setValue(`${idToDelete}-option-name`, "");
     setValue(`${idToDelete}-option-extra`, "");
+  };
+
+  const onRemoveSubOptionClick = (idToDelete: number) => {
+    setOptions((current) =>
+      // 서브 옵션 삭제
+      current.map((option) => ({
+        id: option.id,
+        subOptions: option.subOptions.filter(
+          (subOption) => subOption !== idToDelete
+        ),
+      }))
+    );
+    setValue(`${idToDelete}-option-choice-name`, "");
+    setValue(`${idToDelete}-option-choice-extra`, "");
   };
 
   return (
@@ -163,8 +203,11 @@ export const CreateDish = () => {
                   placeholder="Option Extra"
                 />
               </div>
-              <div className="flex justify-end">
-                <span onClick={() => onAddSubOptionClick()} className="btn">
+              <div className="flex justify-end mb-2">
+                <span
+                  onClick={() => onAddSubOptionClick(option.id)}
+                  className="btn"
+                >
                   Add Sub Option
                 </span>
                 <span
@@ -174,6 +217,40 @@ export const CreateDish = () => {
                   Remove Option
                 </span>
               </div>
+              {option.subOptions.length !== 0 &&
+                option.subOptions.map((subOption) => (
+                  <div
+                    key={subOption}
+                    className="flex flex-col items-end mb-2 w-full"
+                  >
+                    <div className="flex justify-between mb-2 sm:flex-none">
+                      <input
+                        {...register(`${subOption}-option-choice-name`)}
+                        className="input w-space-1/2 sm:w-auto sm:mr-3"
+                        name={`${subOption}-option-choice-name`}
+                        type="text"
+                        placeholder="Sub Option Name"
+                      />
+                      <input
+                        {...register(`${subOption}-option-choice-extra`, {
+                          min: 0,
+                        })}
+                        className="input w-space-1/2 sm:w-auto"
+                        name={`${subOption}-option-choice-extra`}
+                        type="number"
+                        min={0}
+                        defaultValue={0}
+                        placeholder="Sub Option Extra"
+                      />
+                    </div>
+                    <span
+                      onClick={() => onRemoveSubOptionClick(subOption)}
+                      className="btn ml-5"
+                    >
+                      Remove Sub Option
+                    </span>
+                  </div>
+                ))}
             </div>
           ))}
         <Button

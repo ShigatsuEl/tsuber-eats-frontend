@@ -4,6 +4,7 @@ import React from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
+import { Dish } from "../../components/dish";
 import Loading from "../../components/loading";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
@@ -93,7 +94,18 @@ export const OwnerRestaurant = () => {
             </Link>
             <div className="mt-10">
               {data?.getOwnerRestaurant.restaurant?.menu.length !== 0 && (
-                <div>Dish is ready</div>
+                <div className="grid grid-cols-1 gap-6 mb-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {data?.getOwnerRestaurant.restaurant?.menu.map(
+                    (dish, index) => (
+                      <Dish
+                        key={index}
+                        name={dish.name}
+                        price={dish.price}
+                        description={dish.description}
+                      />
+                    )
+                  )}
+                </div>
               )}
             </div>
           </div>

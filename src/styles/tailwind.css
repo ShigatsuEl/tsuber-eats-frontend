@@ -5,6 +5,10 @@
   @apply inline-block p-2 text-lg text-white bg-lime-600 transition cursor-pointer hover:bg-lime-500;
 }
 
+.grid-container {
+  @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3;
+}
+
 .input {
   @apply border border-gray-200 py-2 px-4 font-medium text-lg transition-colors focus:outline-none focus:border-gray-800;
 }

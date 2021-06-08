@@ -6,8 +6,9 @@ import React from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
+import { Dish } from "../../components/dish";
 import Loading from "../../components/loading";
-import { RESTAURANT_FRAGMENT } from "../../fragments";
+import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   GetRestaurantQuery,
   GetRestaurantQueryVariables,
@@ -20,10 +21,14 @@ export const GET_RESTAURANT_QUERY = gql`
       error
       restaurant {
         ...RestaurantResults
+        menu {
+          ...DishResults
+        }
       }
     }
   }
   ${RESTAURANT_FRAGMENT}
+  ${DISH_FRAGMENT}
 `;
 
 interface IParams {
@@ -42,6 +47,7 @@ export const Restaurant = () => {
       },
     },
   });
+  console.log(data);
 
   return (
     <React.Fragment>
@@ -84,6 +90,20 @@ export const Restaurant = () => {
               </h5>
             </div>
           </div>
+          {data?.getRestaurant.restaurant?.menu.length !== 0 && (
+            <div className="grid-container m-10">
+              {data?.getRestaurant.restaurant?.menu.map((dish, index) => (
+                <Dish
+                  key={index}
+                  name={dish.name}
+                  price={dish.price}
+                  description={dish.description}
+                  isCustomer={true}
+                  options={dish.options}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </React.Fragment>

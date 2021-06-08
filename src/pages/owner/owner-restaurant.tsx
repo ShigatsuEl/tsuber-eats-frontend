@@ -100,7 +100,7 @@ export const OwnerRestaurant = () => {
             </Link>
             <div className="mt-10">
               {data?.getOwnerRestaurant.restaurant?.menu.length !== 0 && (
-                <div className="grid grid-cols-1 gap-6 mb-5 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid-container mb-5">
                   {data?.getOwnerRestaurant.restaurant?.menu.map(
                     (dish, index) => (
                       <Dish

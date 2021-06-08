@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import { faUtensils } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
@@ -13,6 +13,7 @@ import {
   GetRestaurantQuery,
   GetRestaurantQueryVariables,
 } from "../../__generated__/GetRestaurantQuery";
+import { CreateOrderItemInput } from "../../__generated__/globalTypes";
 
 export const GET_RESTAURANT_QUERY = gql`
   query GetRestaurantQuery($input: GetRestaurantInput!) {
@@ -31,6 +32,15 @@ export const GET_RESTAURANT_QUERY = gql`
   ${DISH_FRAGMENT}
 `;
 
+export const CREATE_ORDER_MUTATION = gql`
+  mutation CreateOrderMutation($input: CreateOrderInput!) {
+    createOrder(input: $input) {
+      ok
+      error
+    }
+  }
+`;
+
 interface IParams {
   id: string;
 }
@@ -47,7 +57,18 @@ export const Restaurant = () => {
       },
     },
   });
+  const [isOrderStart, setIsOrderStart] = useState(false);
+  const [orderItems, setOrderItems] = useState<CreateOrderItemInput[]>([]);
   console.log(data);
+  console.log(orderItems);
+
+  const triggerStartOrder = () => {
+    setIsOrderStart((current) => !current);
+  };
+
+  const addItemToOrder = (dishId: number) => {
+    setOrderItems((current) => [{ dishId, options: null }]);
+  };
 
   return (
     <React.Fragment>
@@ -90,16 +111,25 @@ export const Restaurant = () => {
               </h5>
             </div>
           </div>
+          <button
+            onClick={triggerStartOrder}
+            className="btn py-3 px-5 mt-10 ml-10"
+          >
+            Start Order
+          </button>
           {data?.getRestaurant.restaurant?.menu.length !== 0 && (
             <div className="grid-container m-10">
               {data?.getRestaurant.restaurant?.menu.map((dish, index) => (
                 <Dish
                   key={index}
+                  id={dish.id}
                   name={dish.name}
                   price={dish.price}
                   description={dish.description}
                   isCustomer={true}
+                  isOrderStart={isOrderStart}
                   options={dish.options}
+                  addItemToOrder={addItemToOrder}
                 />
               ))}
             </div>

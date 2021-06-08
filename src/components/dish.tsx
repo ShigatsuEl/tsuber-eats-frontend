@@ -2,23 +2,31 @@ import React from "react";
 import { GetRestaurantQuery_getRestaurant_restaurant_menu_options } from "../__generated__/GetRestaurantQuery";
 
 interface IDishProps {
+  id?: number;
   name: string;
   price: number;
   description: string;
   isCustomer?: boolean;
+  isOrderStart?: boolean;
   options?: GetRestaurantQuery_getRestaurant_restaurant_menu_options[] | null;
+  addItemToOrder: (dishId: number) => void;
 }
 
 export const Dish: React.FC<IDishProps> = ({
+  id = 0,
   name,
   price,
   description,
   isCustomer = false,
+  isOrderStart = false,
   options,
+  addItemToOrder,
 }) => {
-  console.log(options);
   return (
-    <div className="group flex flex-col border-2 border-gray-400 pt-4 px-5 pb-6 bg-lime-400 transition hover:border-gray-800">
+    <div
+      onClick={() => (isOrderStart ? addItemToOrder(id) : null)}
+      className="group flex flex-col border-2 border-gray-400 pt-4 px-5 pb-6 bg-lime-400 transition hover:border-gray-800"
+    >
       <h2 className="mb-2 text-3xl">{name}</h2>
       <span className="mb-10 opacity-70">{description}</span>
       <span className="inline-block mb-5">{price}￦</span>

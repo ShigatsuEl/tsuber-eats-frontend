@@ -66,17 +66,35 @@ export const Restaurant = () => {
     setIsOrderStart((current) => !current);
   };
 
+  const getItem = (dishId: number) =>
+    orderItems.find((order) => order.dishId === dishId);
+
   const isSelected = (dishId: number) => {
-    return Boolean(orderItems.find((order) => order.dishId === dishId));
+    return Boolean(getItem(dishId));
   };
 
-  const toggleItemToOrder = (dishId: number) => {
+  const addItemToOrder = (dishId: number) => {
     if (isSelected(dishId)) {
-      const filterOrder = orderItems.filter((order) => order.dishId !== dishId);
-      setOrderItems(filterOrder);
       return;
     }
-    setOrderItems((current) => [{ dishId }, ...current]);
+    setOrderItems((current) => [{ dishId, options: [] }, ...current]);
+  };
+
+  const removeItemFromOrder = (dishId: number) => {
+    setOrderItems((current) =>
+      current.filter((dish) => dish.dishId !== dishId)
+    );
+  };
+
+  const addOptionToItem = (dishId: number, option: any) => {
+    const prevItem = getItem(dishId);
+    if (prevItem) {
+      removeItemFromOrder(dishId);
+      setOrderItems((current) => [
+        { dishId, options: [option, ...prevItem.options!] },
+        ...current,
+      ]);
+    }
   };
 
   return (
@@ -139,7 +157,9 @@ export const Restaurant = () => {
                   isOrderStart={isOrderStart}
                   isSelected={isSelected(dish.id)}
                   options={dish.options}
-                  toggleItemToOrder={toggleItemToOrder}
+                  addItemToOrder={addItemToOrder}
+                  removeItemFromOrder={removeItemFromOrder}
+                  addOptionToItem={addOptionToItem}
                 />
               ))}
             </div>

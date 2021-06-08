@@ -10,7 +10,9 @@ interface IDishProps {
   isOrderStart?: boolean;
   isSelected?: boolean;
   options?: GetRestaurantQuery_getRestaurant_restaurant_menu_options[] | null;
-  toggleItemToOrder?: (dishId: number) => void;
+  addItemToOrder?: (dishId: number) => void;
+  removeItemFromOrder?: (dishId: number) => void;
+  addOptionToItem?: (dishId: number, options: any) => void;
 }
 
 export const Dish: React.FC<IDishProps> = ({
@@ -22,13 +24,39 @@ export const Dish: React.FC<IDishProps> = ({
   isOrderStart = false,
   isSelected = false,
   options,
-  toggleItemToOrder,
+  addItemToOrder,
+  removeItemFromOrder,
+  addOptionToItem,
 }) => {
+  const onItemClick = (event: React.MouseEvent<HTMLElement>) => {
+    const { target }: { target: any } = event;
+    if (isOrderStart && target.closest("div").dataset.id === "dish") {
+      // 이벤트 위임을 사용해 특정 div를 클릭시 주문 아이템 옵션을 변경할 수 있도록 설정
+      if (!isSelected && addItemToOrder) {
+        return addItemToOrder(id);
+      }
+      if (isSelected && removeItemFromOrder) {
+        return removeItemFromOrder(id);
+      }
+    }
+  };
+
+  const onItemOptionClick = (
+    event: React.MouseEvent<HTMLElement>,
+    option: any
+  ) => {
+    if (isOrderStart) {
+      if (isSelected && addOptionToItem) {
+        addOptionToItem(id, { name: option.name });
+        console.log("fuck");
+      }
+    }
+  };
+
   return (
     <div
-      onClick={() =>
-        isOrderStart && toggleItemToOrder ? toggleItemToOrder(id) : null
-      }
+      data-id="dish"
+      onClick={onItemClick}
       className={`group flex flex-col border-2 border-gray-400 pt-4 px-5 pb-6 transition ${
         isSelected ? "bg-lime-600" : "bg-lime-400 hover:border-gray-800"
       } ${isOrderStart && "cursor-pointer"}`}
@@ -37,10 +65,17 @@ export const Dish: React.FC<IDishProps> = ({
       <span className="mb-10 opacity-70">{description}</span>
       <span className="inline-block mb-5">{price}￦</span>
       {isCustomer && options !== null && (
-        <div className="p-2 bg-lime-300 transition group-hover:shadow-xl">
+        <div
+          data-id="option"
+          className="p-2 bg-lime-300 transition group-hover:shadow-xl"
+        >
           <h5 className="mb-1 font-semibold">DISH OPTIONS</h5>
           {options?.map((option, index) => (
-            <span key={index} className="flex items-center mb-1 text-sm">
+            <span
+              key={index}
+              className="flex items-center mb-1 text-sm"
+              onClick={(event) => onItemOptionClick(event, option)}
+            >
               <h6 className="mr-2 opacity-70">{option.name}</h6>
               <h6 className="opacity-70">{option.extra}￦</h6>
             </span>

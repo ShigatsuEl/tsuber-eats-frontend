@@ -66,8 +66,17 @@ export const Restaurant = () => {
     setIsOrderStart((current) => !current);
   };
 
-  const addItemToOrder = (dishId: number) => {
-    setOrderItems((current) => [{ dishId, options: null }]);
+  const isSelected = (dishId: number) => {
+    return Boolean(orderItems.find((order) => order.dishId === dishId));
+  };
+
+  const toggleItemToOrder = (dishId: number) => {
+    if (isSelected(dishId)) {
+      const filterOrder = orderItems.filter((order) => order.dishId !== dishId);
+      setOrderItems(filterOrder);
+      return;
+    }
+    setOrderItems((current) => [{ dishId }, ...current]);
   };
 
   return (
@@ -115,7 +124,7 @@ export const Restaurant = () => {
             onClick={triggerStartOrder}
             className="btn py-3 px-5 mt-10 ml-10"
           >
-            Start Order
+            {isOrderStart ? "Ordering" : "Start Order"}
           </button>
           {data?.getRestaurant.restaurant?.menu.length !== 0 && (
             <div className="grid-container m-10">
@@ -128,8 +137,9 @@ export const Restaurant = () => {
                   description={dish.description}
                   isCustomer={true}
                   isOrderStart={isOrderStart}
+                  isSelected={isSelected(dish.id)}
                   options={dish.options}
-                  addItemToOrder={addItemToOrder}
+                  toggleItemToOrder={toggleItemToOrder}
                 />
               ))}
             </div>

@@ -8,8 +8,9 @@ interface IDishProps {
   description: string;
   isCustomer?: boolean;
   isOrderStart?: boolean;
+  isSelected?: boolean;
   options?: GetRestaurantQuery_getRestaurant_restaurant_menu_options[] | null;
-  addItemToOrder: (dishId: number) => void;
+  toggleItemToOrder?: (dishId: number) => void;
 }
 
 export const Dish: React.FC<IDishProps> = ({
@@ -19,13 +20,18 @@ export const Dish: React.FC<IDishProps> = ({
   description,
   isCustomer = false,
   isOrderStart = false,
+  isSelected = false,
   options,
-  addItemToOrder,
+  toggleItemToOrder,
 }) => {
   return (
     <div
-      onClick={() => (isOrderStart ? addItemToOrder(id) : null)}
-      className="group flex flex-col border-2 border-gray-400 pt-4 px-5 pb-6 bg-lime-400 transition hover:border-gray-800"
+      onClick={() =>
+        isOrderStart && toggleItemToOrder ? toggleItemToOrder(id) : null
+      }
+      className={`group flex flex-col border-2 border-gray-400 pt-4 px-5 pb-6 transition ${
+        isSelected ? "bg-lime-600" : "bg-lime-400 hover:border-gray-800"
+      } ${isOrderStart && "cursor-pointer"}`}
     >
       <h2 className="mb-2 text-3xl">{name}</h2>
       <span className="mb-10 opacity-70">{description}</span>

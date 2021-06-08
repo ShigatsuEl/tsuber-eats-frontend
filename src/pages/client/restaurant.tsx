@@ -12,6 +12,7 @@ import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   GetRestaurantQuery,
   GetRestaurantQueryVariables,
+  GetRestaurantQuery_getRestaurant_restaurant_menu,
 } from "../../__generated__/GetRestaurantQuery";
 import { CreateOrderItemInput } from "../../__generated__/globalTypes";
 
@@ -59,7 +60,7 @@ export const Restaurant = () => {
   });
   const [isOrderStart, setIsOrderStart] = useState(false);
   const [orderItems, setOrderItems] = useState<CreateOrderItemInput[]>([]);
-  console.log(data);
+  // console.log(data);
   console.log(orderItems);
 
   const triggerStartOrder = () => {
@@ -89,11 +90,42 @@ export const Restaurant = () => {
   const addOptionToItem = (dishId: number, option: any) => {
     const prevItem = getItem(dishId);
     if (prevItem) {
-      removeItemFromOrder(dishId);
-      setOrderItems((current) => [
-        { dishId, options: [option, ...prevItem.options!] },
-        ...current,
-      ]);
+      const hasOption = Boolean(
+        prevItem.options?.find((prevOption) => prevOption.name === option.name)
+      );
+      if (!hasOption) {
+        removeItemFromOrder(dishId);
+        setOrderItems((current) => [
+          { dishId, options: [option, ...prevItem.options!] },
+          ...current,
+        ]);
+      }
+    }
+  };
+
+  const onItemOptionClick = (
+    event: React.MouseEvent<HTMLElement>,
+    dish: GetRestaurantQuery_getRestaurant_restaurant_menu,
+    option: any
+  ) => {
+    if (isOrderStart) {
+      if (isSelected(dish.id) && addOptionToItem) {
+        addOptionToItem(dish.id, { name: option.name });
+      }
+    }
+  };
+
+  const getOptionFromItem = (
+    item: CreateOrderItemInput,
+    optionName: string
+  ) => {
+    return item.options?.find((option) => option.name === optionName);
+  };
+
+  const isOptionSelected = (dishId: number, optionName: string) => {
+    const item = getItem(dishId);
+    if (item) {
+      return Boolean(getOptionFromItem(item, optionName));
     }
   };
 
@@ -159,8 +191,25 @@ export const Restaurant = () => {
                   options={dish.options}
                   addItemToOrder={addItemToOrder}
                   removeItemFromOrder={removeItemFromOrder}
-                  addOptionToItem={addOptionToItem}
-                />
+                >
+                  {dish.options?.map((option, index) => (
+                    <span
+                      key={index}
+                      className={`flex items-center text-lg font-semibold ${
+                        isOptionSelected(dish.id, option.name) &&
+                        "bg-lime-500 opacity-100"
+                      } ${
+                        dish.options?.length! - 1 === index ? "mb-0" : "mb-3"
+                      }`}
+                      onClick={(event) =>
+                        onItemOptionClick(event, dish, option)
+                      }
+                    >
+                      <h6 className="mr-2 opacity-70">{option.name}</h6>
+                      <h6 className="opacity-70">{option.extra}￦</h6>
+                    </span>
+                  ))}
+                </Dish>
               ))}
             </div>
           )}

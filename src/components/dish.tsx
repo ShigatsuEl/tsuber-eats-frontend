@@ -12,7 +12,6 @@ interface IDishProps {
   options?: GetRestaurantQuery_getRestaurant_restaurant_menu_options[] | null;
   addItemToOrder?: (dishId: number) => void;
   removeItemFromOrder?: (dishId: number) => void;
-  addOptionToItem?: (dishId: number, options: any) => void;
 }
 
 export const Dish: React.FC<IDishProps> = ({
@@ -26,7 +25,7 @@ export const Dish: React.FC<IDishProps> = ({
   options,
   addItemToOrder,
   removeItemFromOrder,
-  addOptionToItem,
+  children: dishOptions,
 }) => {
   const onItemClick = (event: React.MouseEvent<HTMLElement>) => {
     const { target }: { target: any } = event;
@@ -37,18 +36,6 @@ export const Dish: React.FC<IDishProps> = ({
       }
       if (isSelected && removeItemFromOrder) {
         return removeItemFromOrder(id);
-      }
-    }
-  };
-
-  const onItemOptionClick = (
-    event: React.MouseEvent<HTMLElement>,
-    option: any
-  ) => {
-    if (isOrderStart) {
-      if (isSelected && addOptionToItem) {
-        addOptionToItem(id, { name: option.name });
-        console.log("fuck");
       }
     }
   };
@@ -69,17 +56,8 @@ export const Dish: React.FC<IDishProps> = ({
           data-id="option"
           className="p-2 bg-lime-300 transition group-hover:shadow-xl"
         >
-          <h5 className="mb-1 font-semibold">DISH OPTIONS</h5>
-          {options?.map((option, index) => (
-            <span
-              key={index}
-              className="flex items-center mb-1 text-sm"
-              onClick={(event) => onItemOptionClick(event, option)}
-            >
-              <h6 className="mr-2 opacity-70">{option.name}</h6>
-              <h6 className="opacity-70">{option.extra}￦</h6>
-            </span>
-          ))}
+          <h5 className="mb-3 font-semibold text-lg">DISH OPTIONS</h5>
+          {dishOptions}
         </div>
       )}
     </div>

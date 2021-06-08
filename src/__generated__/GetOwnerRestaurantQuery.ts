@@ -37,6 +37,13 @@ export interface GetOwnerRestaurantQuery_getOwnerRestaurant_restaurant_menu {
   options: GetOwnerRestaurantQuery_getOwnerRestaurant_restaurant_menu_options[] | null;
 }
 
+export interface GetOwnerRestaurantQuery_getOwnerRestaurant_restaurant_orders {
+  __typename: "Order";
+  id: number;
+  createdAt: any;
+  total: number | null;
+}
+
 export interface GetOwnerRestaurantQuery_getOwnerRestaurant_restaurant {
   __typename: "Restaurant";
   id: number;
@@ -46,6 +53,7 @@ export interface GetOwnerRestaurantQuery_getOwnerRestaurant_restaurant {
   address: string;
   isPromoted: boolean;
   menu: GetOwnerRestaurantQuery_getOwnerRestaurant_restaurant_menu[];
+  orders: GetOwnerRestaurantQuery_getOwnerRestaurant_restaurant_orders[];
 }
 
 export interface GetOwnerRestaurantQuery_getOwnerRestaurant {

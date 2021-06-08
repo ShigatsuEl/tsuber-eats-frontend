@@ -1,13 +1,26 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { VictoryAxis, VictoryBar, VictoryChart } from "victory";
+import {
+  VictoryAxis,
+  VictoryBrushContainer,
+  VictoryChart,
+  VictoryLabel,
+  VictoryLine,
+  VictoryTheme,
+  VictoryZoomContainer,
+  VictoryZoomContainerProps,
+} from "victory";
 import { Dish } from "../../components/dish";
 import Loading from "../../components/loading";
-import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
+import {
+  DISH_FRAGMENT,
+  ORDER_FRAGMENT,
+  RESTAURANT_FRAGMENT,
+} from "../../fragments";
 import {
   GetOwnerRestaurantQuery,
   GetOwnerRestaurantQueryVariables,
@@ -23,11 +36,15 @@ export const GET_OWNER_RESTAURANT_QUERY = gql`
         menu {
           ...DishResults
         }
+        orders {
+          ...OrderResults
+        }
       }
     }
   }
   ${RESTAURANT_FRAGMENT}
   ${DISH_FRAGMENT}
+  ${ORDER_FRAGMENT}
 `;
 
 interface IParams {
@@ -45,6 +62,11 @@ export const OwnerRestaurant = () => {
         id: +id,
       },
     },
+  });
+  const [zoomDomain, setZoomDomain] = useState<
+    VictoryZoomContainerProps["zoomDomain"]
+  >({
+    x: [new Date(2000, 1, 1), new Date(2020, 12, 30)],
   });
   console.log(data);
   return (
@@ -108,21 +130,71 @@ export const OwnerRestaurant = () => {
             </div>
             <div className="mt-20">
               <h4 className="font-semibold text-center text-3xl">Sales</h4>
-              <div className="mx-auto max-w-screen-sm w-full">
-                <VictoryChart domainPadding={20}>
-                  <VictoryAxis
-                    label="Amount of Money"
-                    dependentAxis
-                    tickValues={[20, 30, 40, 50, 60]}
+              <div className="mb-40">
+                <VictoryChart
+                  width={window.innerWidth}
+                  height={470}
+                  theme={VictoryTheme.material}
+                  scale={{ x: "time" }}
+                  containerComponent={
+                    <VictoryZoomContainer
+                      zoomDimension="x"
+                      zoomDomain={zoomDomain}
+                      onZoomDomainChange={(domain) =>
+                        setZoomDomain(() => domain)
+                      }
+                    />
+                  }
+                >
+                  <VictoryLine
+                    labels={({ datum }) => `(￦)${datum.y}`}
+                    labelComponent={
+                      <VictoryLabel
+                        renderInPortal
+                        style={{ fontSize: 18, opacity: 0.7 } as any}
+                        dy={-20}
+                      />
+                    }
+                    interpolation="natural"
+                    style={{
+                      data: { stroke: "#84CC16" },
+                    }}
+                    data={data?.getOwnerRestaurant.restaurant?.orders.map(
+                      (order) => ({
+                        x: order.createdAt,
+                        y: order.total,
+                      })
+                    )}
                   />
-                  <VictoryAxis label="Days of Life" />
-                  <VictoryBar
-                    data={[
-                      { x: 10, y: 20 },
-                      { x: 20, y: 5 },
-                      { x: 35, y: 55 },
-                      { x: 45, y: 99 },
-                    ]}
+                </VictoryChart>
+                <VictoryChart
+                  padding={{ top: 0, left: 50, right: 50, bottom: 30 }}
+                  width={window.innerWidth}
+                  height={100}
+                  scale={{ x: "time" }}
+                  containerComponent={
+                    <VictoryBrushContainer
+                      brushDimension="x"
+                      brushDomain={zoomDomain}
+                      onBrushDomainChange={(domain) =>
+                        setZoomDomain((current) => domain)
+                      }
+                    />
+                  }
+                >
+                  <VictoryAxis
+                    tickFormat={(tick) => new Date(tick).getFullYear()}
+                  />
+                  <VictoryLine
+                    style={{
+                      data: { stroke: "#84CC16" },
+                    }}
+                    data={data?.getOwnerRestaurant.restaurant?.orders.map(
+                      (order) => ({
+                        x: order.createdAt,
+                        y: order.total,
+                      })
+                    )}
                   />
                 </VictoryChart>
               </div>

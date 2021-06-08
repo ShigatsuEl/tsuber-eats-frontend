@@ -7,12 +7,12 @@ import { HelmetProvider } from "react-helmet-async";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Dish } from "../../components/dish";
+import { DishOption } from "../../components/dish-option";
 import Loading from "../../components/loading";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   GetRestaurantQuery,
   GetRestaurantQueryVariables,
-  GetRestaurantQuery_getRestaurant_restaurant_menu,
 } from "../../__generated__/GetRestaurantQuery";
 import { CreateOrderItemInput } from "../../__generated__/globalTypes";
 
@@ -63,6 +63,8 @@ export const Restaurant = () => {
   // console.log(data);
   console.log(orderItems);
 
+  /* common */
+
   const triggerStartOrder = () => {
     setIsOrderStart((current) => !current);
   };
@@ -73,6 +75,8 @@ export const Restaurant = () => {
   const isSelected = (dishId: number) => {
     return Boolean(getItem(dishId));
   };
+
+  /* Item Order */
 
   const addItemToOrder = (dishId: number) => {
     if (isSelected(dishId)) {
@@ -87,30 +91,21 @@ export const Restaurant = () => {
     );
   };
 
-  const addOptionToItem = (dishId: number, option: any) => {
+  /* Item Option Order */
+
+  const addOptionToItem = (dishId: number, optionName: string) => {
     const prevItem = getItem(dishId);
     if (prevItem) {
       const hasOption = Boolean(
-        prevItem.options?.find((prevOption) => prevOption.name === option.name)
+        prevItem.options?.find((prevOption) => prevOption.name === optionName)
       );
       if (!hasOption) {
+        // 상태관리를 위해 reset 후, 선언
         removeItemFromOrder(dishId);
         setOrderItems((current) => [
-          { dishId, options: [option, ...prevItem.options!] },
+          { dishId, options: [{ name: optionName }, ...prevItem.options!] },
           ...current,
         ]);
-      }
-    }
-  };
-
-  const onItemOptionClick = (
-    event: React.MouseEvent<HTMLElement>,
-    dish: GetRestaurantQuery_getRestaurant_restaurant_menu,
-    option: any
-  ) => {
-    if (isOrderStart) {
-      if (isSelected(dish.id) && addOptionToItem) {
-        addOptionToItem(dish.id, { name: option.name });
       }
     }
   };
@@ -126,6 +121,27 @@ export const Restaurant = () => {
     const item = getItem(dishId);
     if (item) {
       return Boolean(getOptionFromItem(item, optionName));
+    }
+    return false;
+  };
+
+  const removeOptionFromItem = (dishId: number, optionName: string) => {
+    if (!isSelected) {
+      return;
+    }
+    const prevItem = getItem(dishId);
+    if (prevItem) {
+      // 상태관리를 위해 reset 후, 선언
+      removeItemFromOrder(dishId);
+      setOrderItems((current) => [
+        {
+          dishId,
+          options: prevItem.options?.filter(
+            (option) => option.name !== optionName
+          ),
+        },
+        ...current,
+      ]);
     }
   };
 
@@ -193,21 +209,18 @@ export const Restaurant = () => {
                   removeItemFromOrder={removeItemFromOrder}
                 >
                   {dish.options?.map((option, index) => (
-                    <span
+                    <DishOption
                       key={index}
-                      className={`flex items-center text-lg font-semibold ${
-                        isOptionSelected(dish.id, option.name) &&
-                        "bg-lime-500 opacity-100"
-                      } ${
-                        dish.options?.length! - 1 === index ? "mb-0" : "mb-3"
-                      }`}
-                      onClick={(event) =>
-                        onItemOptionClick(event, dish, option)
+                      index={index}
+                      option={option}
+                      dish={dish}
+                      isOrderStart={isOrderStart}
+                      isSelected={isOptionSelected(dish.id, option.name)}
+                      addOptionToItem={() =>
+                        addOptionToItem(dish.id, option.name)
                       }
-                    >
-                      <h6 className="mr-2 opacity-70">{option.name}</h6>
-                      <h6 className="opacity-70">{option.extra}￦</h6>
-                    </span>
+                      removeOptionFromItem={removeOptionFromItem}
+                    />
                   ))}
                 </Dish>
               ))}

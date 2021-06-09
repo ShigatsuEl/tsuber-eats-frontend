@@ -190,6 +190,26 @@ export const Restaurant = () => {
     return false;
   };
 
+  const removeOptionChoiceFromItem = (dishId: number, choiceName: string) => {
+    if (!isSelected) {
+      return;
+    }
+    const prevItem = getItem(dishId);
+    if (prevItem) {
+      // 상태관리를 위해 reset 후, 선언
+      removeItemFromOrder(dishId);
+      setOrderItems((current) => [
+        {
+          dishId,
+          options: prevItem.options?.filter(
+            (option) => option.choice !== choiceName
+          ),
+        },
+        ...current,
+      ]);
+    }
+  };
+
   return (
     <React.Fragment>
       {loading ? (
@@ -283,6 +303,9 @@ export const Restaurant = () => {
                                 option.name,
                                 choice.name
                               )
+                            }
+                            removeOptionChoiceFromItem={() =>
+                              removeOptionChoiceFromItem(dish.id, choice.name)
                             }
                           />
                         ))}

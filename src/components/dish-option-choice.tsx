@@ -6,6 +6,7 @@ interface IDishOptionChoiceProps {
   isOrderStart: boolean;
   isOptionChoiceSelected: boolean;
   addOptionChoiceToItem: () => void;
+  removeOptionChoiceFromItem: () => void;
 }
 
 export const DishOptionChoice: React.FC<IDishOptionChoiceProps> = ({
@@ -14,10 +15,15 @@ export const DishOptionChoice: React.FC<IDishOptionChoiceProps> = ({
   isOrderStart,
   isOptionChoiceSelected,
   addOptionChoiceToItem,
+  removeOptionChoiceFromItem,
 }) => {
   const onDishOptionChoiceClick = () => {
     if (isOrderStart) {
-      addOptionChoiceToItem();
+      if (isOptionChoiceSelected) {
+        removeOptionChoiceFromItem();
+      } else {
+        addOptionChoiceToItem();
+      }
     }
   };
 

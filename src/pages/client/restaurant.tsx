@@ -155,22 +155,46 @@ export const Restaurant = () => {
   ) => {
     const prevItem = getItem(dishId);
     if (prevItem) {
-      const hasOption = Boolean(
+      const hasNameOption = Boolean(
+        prevItem.options?.find((prevOption) => prevOption.name === optionName)
+      );
+      const hasChoiceOption = Boolean(
         prevItem.options?.find((prevOption) => prevOption.choice === choiceName)
       );
-      if (!hasOption) {
-        // 상태관리를 위해 reset 후, 선언
-        removeItemFromOrder(dishId);
-        setOrderItems((current) => [
-          {
-            dishId,
-            options: [
-              { name: optionName, choice: choiceName },
-              ...prevItem.options!,
-            ],
-          },
-          ...current,
-        ]);
+      if (!hasNameOption) {
+        if (!hasChoiceOption) {
+          // 상태관리를 위해 reset 후, 선언
+          // option name과 choice가 orderItems에 존재하지 않는 경우
+          removeItemFromOrder(dishId);
+          setOrderItems((current) => [
+            {
+              dishId,
+              options: [
+                { name: optionName, choice: choiceName },
+                ...prevItem.options!,
+              ],
+            },
+            ...current,
+          ]);
+        }
+      } else {
+        if (!hasChoiceOption) {
+          // 상태관리를 위해 reset 후, 선언
+          // option name이 같은 orderItem이 존재하고 choice가 같지 않은 경우 변경하려는 option을 초기화한다.
+          removeItemFromOrder(dishId);
+          setOrderItems((current) => [
+            {
+              dishId,
+              options: [
+                { name: optionName, choice: choiceName },
+                ...prevItem.options?.filter(
+                  (option) => option.name !== optionName
+                )!,
+              ],
+            },
+            ...current,
+          ]);
+        }
       }
     }
   };

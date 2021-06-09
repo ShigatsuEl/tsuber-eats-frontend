@@ -22,6 +22,7 @@ export const DishOption: React.FC<IDishOptionProps> = ({
   isSelected,
   addOptionToItem,
   removeOptionFromItem,
+  children,
 }) => {
   const onItemOptionClick = (
     event: React.MouseEvent<HTMLElement>,
@@ -38,14 +39,17 @@ export const DishOption: React.FC<IDishOptionProps> = ({
   };
 
   return (
-    <span
-      className={`flex items-center text-lg font-semibold bg-lime-400 ${
-        isSelected && "bg-lime-500 opacity-100"
+    <div
+      className={`flex flex-col justify-center text-lg font-semibold opacity-70 ${
+        isSelected && "opacity-100"
       } ${dish.options?.length! - 1 === index ? "mb-0" : "mb-3"}`}
       onClick={(event) => onItemOptionClick(event, dish, option)}
     >
-      <h6 className="mr-2 opacity-70">{option.name}</h6>
-      {option.extra && <h6 className="opacity-70">{option.extra}￦</h6>}
-    </span>
+      <div className={`flex items-center ${isSelected && "bg-lime-500"}`}>
+        <h6 className="mr-2">{option.name}</h6>
+        {option.extra && <h6 className="">{option.extra}￦</h6>}
+      </div>
+      {children}
+    </div>
   );
 };

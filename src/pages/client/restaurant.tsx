@@ -8,6 +8,7 @@ import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Dish } from "../../components/dish";
 import { DishOption } from "../../components/dish-option";
+import { DishOptionChoice } from "../../components/dish-option-choice";
 import Loading from "../../components/loading";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
@@ -60,7 +61,7 @@ export const Restaurant = () => {
   });
   const [isOrderStart, setIsOrderStart] = useState(false);
   const [orderItems, setOrderItems] = useState<CreateOrderItemInput[]>([]);
-  // console.log(data);
+  console.log(data);
   console.log(orderItems);
 
   /* common */
@@ -220,7 +221,16 @@ export const Restaurant = () => {
                         addOptionToItem(dish.id, option.name)
                       }
                       removeOptionFromItem={removeOptionFromItem}
-                    />
+                    >
+                      {option.choices &&
+                        option.choices.map((choice, index) => (
+                          <DishOptionChoice
+                            key={index}
+                            name={choice.name}
+                            extra={choice.extra}
+                          />
+                        ))}
+                    </DishOption>
                   ))}
                 </Dish>
               ))}

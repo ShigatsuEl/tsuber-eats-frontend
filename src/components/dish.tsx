@@ -54,7 +54,9 @@ export const Dish: React.FC<IDishProps> = ({
       {isCustomer && options !== null && (
         <div
           data-id="option"
-          className="p-2 bg-lime-300 transition group-hover:shadow-xl"
+          className={`p-2 bg-lime-300 transition group-hover:shadow-xl ${
+            isOrderStart && isSelected ? "cursor-pointer" : "cursor-default"
+          }`}
         >
           <h5 className="mb-3 font-semibold text-lg">DISH OPTIONS</h5>
           {dishOptions}

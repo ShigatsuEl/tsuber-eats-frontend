@@ -175,6 +175,21 @@ export const Restaurant = () => {
     }
   };
 
+  const getOptionChoiceFromItem = (
+    item: CreateOrderItemInput,
+    choiceName: string
+  ) => {
+    return item.options?.find((option) => option.choice === choiceName);
+  };
+
+  const isOptionChoiceSelected = (dishId: number, choiceName: string) => {
+    const item = getItem(dishId);
+    if (item) {
+      return Boolean(getOptionChoiceFromItem(item, choiceName));
+    }
+    return false;
+  };
+
   return (
     <React.Fragment>
       {loading ? (
@@ -258,6 +273,10 @@ export const Restaurant = () => {
                             name={choice.name}
                             extra={choice.extra}
                             isOrderStart={isOrderStart}
+                            isOptionChoiceSelected={isOptionChoiceSelected(
+                              dish.id,
+                              choice.name
+                            )}
                             addOptionChoiceToItem={() =>
                               addOptionChoiceToItem(
                                 dish.id,

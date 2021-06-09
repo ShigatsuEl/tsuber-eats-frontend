@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { useHistory, useParams } from "react-router";
 import { Link } from "react-router-dom";
+import { Bill } from "../../components/bill";
 import { Dish } from "../../components/dish";
 import { DishOption } from "../../components/dish-option";
 import { DishOptionChoice } from "../../components/dish-option-choice";
@@ -342,6 +343,12 @@ export const Restaurant = () => {
                 Cancel Order
               </button>
             </>
+          )}
+          {isOrderStart && orderItems.length !== 0 && (
+            <Bill
+              menu={data?.getRestaurant.restaurant?.menu}
+              orderItems={orderItems}
+            />
           )}
           {data?.getRestaurant.restaurant?.menu.length !== 0 && (
             <div className="grid-container m-10">

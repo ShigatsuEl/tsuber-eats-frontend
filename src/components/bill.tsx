@@ -30,15 +30,22 @@ export const Bill: React.FC<IBillProps> = ({ menu, orderItems }) => {
               ?.options?.find((option) => option.name === orderOption.name)
               ?.extra!
         );
-        setTotal(
-          (current) =>
-            current +
-            menu
-              ?.find((dish) => dish.id === order.dishId)
-              ?.options?.find((option) => option.name === orderOption.name)
-              ?.choices?.find((choice) => choice.name === orderOption.choice)
-              ?.extra!
-        );
+        if (
+          menu
+            ?.find((dish) => dish.id === order.dishId)
+            ?.options?.find((option) => option.name === orderOption.name)
+            ?.choices?.find((choice) => choice.name === orderOption.choice)
+        ) {
+          setTotal(
+            (current) =>
+              current +
+              menu
+                ?.find((dish) => dish.id === order.dishId)
+                ?.options?.find((option) => option.name === orderOption.name)
+                ?.choices?.find((choice) => choice.name === orderOption.choice)
+                ?.extra!
+          );
+        }
       });
     });
   };
@@ -82,33 +89,42 @@ export const Bill: React.FC<IBillProps> = ({ menu, orderItems }) => {
                   }
                   ￦)
                 </span>
-                <span className="mr-2">
-                  <FontAwesomeIcon className="mx-3" icon={faArrowRight} />
-                  {
-                    menu
-                      ?.find((dish) => dish.id === order.dishId)
-                      ?.options?.find(
-                        (option) => option.name === orderOption.name
-                      )
-                      ?.choices?.find(
-                        (choice) => choice.name === orderOption.choice
-                      )?.name
-                  }
-                </span>
-                <span>
-                  (
-                  {
-                    menu
-                      ?.find((dish) => dish.id === order.dishId)
-                      ?.options?.find(
-                        (option) => option.name === orderOption.name
-                      )
-                      ?.choices?.find(
-                        (choice) => choice.name === orderOption.choice
-                      )?.extra
-                  }
-                  ￦)
-                </span>
+                {menu
+                  ?.find((dish) => dish.id === order.dishId)
+                  ?.options?.find((option) => option.name === orderOption.name)
+                  ?.choices?.find(
+                    (choice) => choice.name === orderOption.choice
+                  ) && (
+                  <>
+                    <span className="mr-2">
+                      <FontAwesomeIcon className="mx-3" icon={faArrowRight} />
+                      {
+                        menu
+                          ?.find((dish) => dish.id === order.dishId)
+                          ?.options?.find(
+                            (option) => option.name === orderOption.name
+                          )
+                          ?.choices?.find(
+                            (choice) => choice.name === orderOption.choice
+                          )?.name
+                      }
+                    </span>
+                    <span>
+                      (
+                      {
+                        menu
+                          ?.find((dish) => dish.id === order.dishId)
+                          ?.options?.find(
+                            (option) => option.name === orderOption.name
+                          )
+                          ?.choices?.find(
+                            (choice) => choice.name === orderOption.choice
+                          )?.extra
+                      }
+                      ￦)
+                    </span>
+                  </>
+                )}
               </h4>
             </div>
           ))}

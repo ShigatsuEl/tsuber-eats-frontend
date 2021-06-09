@@ -146,6 +146,35 @@ export const Restaurant = () => {
     }
   };
 
+  /* Item Option Choice Order */
+
+  const addOptionChoiceToItem = (
+    dishId: number,
+    optionName: string,
+    choiceName: string
+  ) => {
+    const prevItem = getItem(dishId);
+    if (prevItem) {
+      const hasOption = Boolean(
+        prevItem.options?.find((prevOption) => prevOption.choice === choiceName)
+      );
+      if (!hasOption) {
+        // 상태관리를 위해 reset 후, 선언
+        removeItemFromOrder(dishId);
+        setOrderItems((current) => [
+          {
+            dishId,
+            options: [
+              { name: optionName, choice: choiceName },
+              ...prevItem.options!,
+            ],
+          },
+          ...current,
+        ]);
+      }
+    }
+  };
+
   return (
     <React.Fragment>
       {loading ? (
@@ -228,6 +257,14 @@ export const Restaurant = () => {
                             key={index}
                             name={choice.name}
                             extra={choice.extra}
+                            isOrderStart={isOrderStart}
+                            addOptionChoiceToItem={() =>
+                              addOptionChoiceToItem(
+                                dish.id,
+                                option.name,
+                                choice.name
+                              )
+                            }
                           />
                         ))}
                     </DishOption>

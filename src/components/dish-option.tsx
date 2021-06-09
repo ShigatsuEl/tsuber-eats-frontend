@@ -43,9 +43,11 @@ export const DishOption: React.FC<IDishOptionProps> = ({
       className={`flex flex-col justify-center text-lg font-semibold opacity-70 ${
         isSelected && "opacity-100"
       } ${dish.options?.length! - 1 === index ? "mb-0" : "mb-3"}`}
-      onClick={(event) => onItemOptionClick(event, dish, option)}
     >
-      <div className={`flex items-center ${isSelected && "bg-lime-500"}`}>
+      <div
+        className={`flex items-center ${isSelected && "bg-lime-500"}`}
+        onClick={(event) => onItemOptionClick(event, dish, option)}
+      >
         <h6 className="mr-2">{option.name}</h6>
         {option.extra && <h6 className="">{option.extra}￦</h6>}
       </div>

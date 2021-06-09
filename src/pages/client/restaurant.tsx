@@ -1,16 +1,20 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { faUtensils } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import gql from "graphql-tag";
 import React, { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Dish } from "../../components/dish";
 import { DishOption } from "../../components/dish-option";
 import { DishOptionChoice } from "../../components/dish-option-choice";
 import Loading from "../../components/loading";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
+import {
+  CreateOrderMutation,
+  CreateOrderMutationVariables,
+} from "../../__generated__/CreateOrderMutation";
 import {
   GetRestaurantQuery,
   GetRestaurantQueryVariables,
@@ -39,6 +43,7 @@ export const CREATE_ORDER_MUTATION = gql`
     createOrder(input: $input) {
       ok
       error
+      orderId
     }
   }
 `;
@@ -49,6 +54,9 @@ interface IParams {
 
 export const Restaurant = () => {
   const { id: restaurantId } = useParams<IParams>();
+  const history = useHistory();
+  const [isOrderStart, setIsOrderStart] = useState(false);
+  const [orderItems, setOrderItems] = useState<CreateOrderItemInput[]>([]);
   const { data, loading } = useQuery<
     GetRestaurantQuery,
     GetRestaurantQueryVariables
@@ -59,16 +67,54 @@ export const Restaurant = () => {
       },
     },
   });
-  const [isOrderStart, setIsOrderStart] = useState(false);
-  const [orderItems, setOrderItems] = useState<CreateOrderItemInput[]>([]);
+  const [createOrder] = useMutation<
+    CreateOrderMutation,
+    CreateOrderMutationVariables
+  >(CREATE_ORDER_MUTATION, {
+    onCompleted,
+  });
   console.log(data);
   console.log(orderItems);
 
   /* common */
 
   const triggerStartOrder = () => {
-    setIsOrderStart((current) => !current);
+    setIsOrderStart(true);
   };
+
+  const triggerCancelOrder = () => {
+    setIsOrderStart(false);
+    setOrderItems([]);
+  };
+
+  const triggerConfirmOrder = () => {
+    if (orderItems.length === 0) {
+      alert("Please select an order");
+      return;
+    }
+    const ok = window.confirm("May I take your order?");
+    if (ok) {
+      createOrder({
+        variables: {
+          input: {
+            restaurantId: +restaurantId,
+            items: orderItems,
+          },
+        },
+      });
+    }
+  };
+
+  function onCompleted(data: CreateOrderMutation) {
+    const {
+      createOrder: { ok, orderId },
+    } = data;
+    if (ok) {
+      history.push(`/orders/${orderId}`);
+    }
+  }
+
+  /* Item Order */
 
   const getItem = (dishId: number) =>
     orderItems.find((order) => order.dishId === dishId);
@@ -76,8 +122,6 @@ export const Restaurant = () => {
   const isSelected = (dishId: number) => {
     return Boolean(getItem(dishId));
   };
-
-  /* Item Order */
 
   const addItemToOrder = (dishId: number) => {
     if (isSelected(dishId)) {
@@ -275,12 +319,30 @@ export const Restaurant = () => {
               </h5>
             </div>
           </div>
-          <button
-            onClick={triggerStartOrder}
-            className="btn py-3 px-5 mt-10 ml-10"
-          >
-            {isOrderStart ? "Ordering" : "Start Order"}
-          </button>
+          {!isOrderStart && (
+            <button
+              onClick={triggerStartOrder}
+              className="btn py-3 px-5 mt-10 ml-10"
+            >
+              Start Order
+            </button>
+          )}
+          {isOrderStart && (
+            <>
+              <button
+                onClick={triggerConfirmOrder}
+                className="btn py-3 px-5 mt-10 ml-10"
+              >
+                Confirm Order
+              </button>
+              <button
+                onClick={triggerCancelOrder}
+                className="btn py-3 px-5 mt-10 ml-10 bg-black opacity-80 hover:bg-black hover:opacity-100"
+              >
+                Cancel Order
+              </button>
+            </>
+          )}
           {data?.getRestaurant.restaurant?.menu.length !== 0 && (
             <div className="grid-container m-10">
               {data?.getRestaurant.restaurant?.menu.map((dish, index) => (

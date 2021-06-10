@@ -5,6 +5,12 @@
   @apply inline-block p-2 text-lg text-white bg-lime-600 transition cursor-pointer hover:bg-lime-500;
 }
 
+@media (min-width: 1024px) {
+  .lg\:bill-container {
+    width: calc(50% - 40px);
+  }
+}
+
 .grid-container {
   @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3;
 }

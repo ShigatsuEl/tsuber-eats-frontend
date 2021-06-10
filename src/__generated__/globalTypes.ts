@@ -104,6 +104,10 @@ export interface SearchRestaurantInput {
   query: string;
 }
 
+export interface UpdateOrderInput {
+  id: number;
+}
+
 export interface VerifyEmailInput {
   code: string;
 }

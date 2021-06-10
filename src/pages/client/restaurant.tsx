@@ -3,7 +3,7 @@ import { faUtensils } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import gql from "graphql-tag";
 import React, { useState } from "react";
-import { HelmetProvider } from "react-helmet-async";
+import { Helmet } from "react-helmet-async";
 import { useHistory, useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Bill } from "../../components/bill";
@@ -286,9 +286,9 @@ export const Restaurant = () => {
         <Loading />
       ) : (
         <div>
-          <HelmetProvider>
+          <Helmet>
             <title>{data?.getRestaurant.restaurant?.name} | Tsuber Eats</title>
-          </HelmetProvider>
+          </Helmet>
           <div
             data-testid="restaurant-coverImg"
             className="relative py-40 px-10 bg-cover bg-center bg-gray-800"

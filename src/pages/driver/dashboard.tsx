@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import GoogleMapReact from "google-map-react";
+import { Delivery } from "../../components/delivery";
 
 interface ICoords {
   latitude: number;
@@ -11,6 +13,8 @@ export const Dashboard = () => {
     latitude: 0,
     longitude: 0,
   });
+  const [map, setMap] = useState<any>();
+  const [maps, setMaps] = useState<any>();
 
   const onSuccess = ({
     coords: { latitude, longitude },
@@ -21,11 +25,10 @@ export const Dashboard = () => {
   const onError = (positionError: GeolocationPositionError) => {
     console.log(positionError);
   };
-
   const onApiLoaded = ({ map, maps }: { map: any; maps: any }) => {
-    setTimeout(() => {
-      map.panTo(new maps.LatLng(driverCoords.latitude, driverCoords.longitude));
-    }, 3000);
+    setMap(map);
+    setMaps(maps);
+    map.panTo(new maps.LatLng(driverCoords.latitude, driverCoords.longitude));
   };
 
   useEffect(() => {
@@ -34,16 +37,24 @@ export const Dashboard = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (map && maps) {
+      map.panTo(new maps.LatLng(driverCoords.latitude, driverCoords.longitude));
+    }
+  }, [driverCoords.latitude, driverCoords.longitude]);
+
   return (
     <div>
-      <div className="w-full overflow-hidden" style={{ height: "85vh" }}>
+      <div className="w-full overflow-hidden" style={{ height: "50vh" }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyCd6qBYXKaEb7TNIKZyWooyY-teIR4ozsA" }}
-          defaultZoom={15}
+          defaultZoom={16}
           defaultCenter={{ lat: 37.5, lng: 127.5 }}
           yesIWantToUseGoogleMapApiInternals
           onGoogleApiLoaded={onApiLoaded}
-        ></GoogleMapReact>
+        >
+          <Delivery lat={driverCoords.latitude} lng={driverCoords.longitude} />
+        </GoogleMapReact>
       </div>
     </div>
   );

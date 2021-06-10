@@ -12,6 +12,7 @@ import { Category } from "../pages/client/category";
 import { Restaurant } from "../pages/client/restaurant";
 import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
+import { Dashboard } from "../pages/driver/dashboard";
 import { LogOut } from "../pages/logout";
 import { Order } from "../pages/order";
 import { CreateDish } from "../pages/owner/create-dish";
@@ -21,6 +22,7 @@ import { OwnerRestaurants } from "../pages/owner/owner-restaurants";
 import { ConfirmEmail } from "../pages/user/confirm-email";
 import { EditProfile } from "../pages/user/edit-profile";
 import { MyProfile } from "../pages/user/my-profile";
+import { UserRole } from "../__generated__/globalTypes";
 
 const UserRouter = [
   {
@@ -83,6 +85,13 @@ const OwnerRouter = [
   },
 ];
 
+const DriverRouter = [
+  {
+    path: "/",
+    component: <Dashboard />,
+  },
+];
+
 export const LoggedInRouter = () => {
   const { data, error, loading } = useLoginUser();
 
@@ -102,14 +111,20 @@ export const LoggedInRouter = () => {
             {route.component}
           </Route>
         ))}
-        {data.loginUser.role === "Client" &&
+        {data.loginUser.role === UserRole.Client &&
           ClientRouter.map((route) => (
             <Route key={route.path} path={route.path} exact>
               {route.component}
             </Route>
           ))}
-        {data.loginUser.role === "Owner" &&
+        {data.loginUser.role === UserRole.Owner &&
           OwnerRouter.map((route) => (
+            <Route key={route.path} path={route.path} exact>
+              {route.component}
+            </Route>
+          ))}
+        {data.loginUser.role === UserRole.Delivery &&
+          DriverRouter.map((route) => (
             <Route key={route.path} path={route.path} exact>
               {route.component}
             </Route>

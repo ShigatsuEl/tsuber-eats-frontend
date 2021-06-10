@@ -1,6 +1,7 @@
-import { useQuery, useSubscription } from "@apollo/client";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router";
 import { DETAIL_ORDER_FRAGMENT } from "../fragments";
@@ -8,10 +9,7 @@ import {
   GetOrderQuery,
   GetOrderQueryVariables,
 } from "../__generated__/GetOrderQuery";
-import {
-  OnUpdateOrders,
-  OnUpdateOrdersVariables,
-} from "../__generated__/OnUpdateOrders";
+import { OnUpdateOrders } from "../__generated__/OnUpdateOrders";
 
 export const GET_ORDER_QUERY = gql`
   query GetOrderQuery($input: GetOrderInput!) {
@@ -41,27 +39,47 @@ interface IParams {
 
 export const Order = () => {
   const { id } = useParams<IParams>();
-  const { data } = useQuery<GetOrderQuery, GetOrderQueryVariables>(
-    GET_ORDER_QUERY,
-    {
-      variables: {
-        input: {
-          id: +id,
-        },
-      },
-    }
-  );
-  const { data: subscriptionData } = useSubscription<
-    OnUpdateOrders,
-    OnUpdateOrdersVariables
-  >(ORDER_SUBSCRIPTION, {
+  const { data, subscribeToMore } = useQuery<
+    GetOrderQuery,
+    GetOrderQueryVariables
+  >(GET_ORDER_QUERY, {
     variables: {
       input: {
         id: +id,
       },
     },
   });
-  console.log(subscriptionData);
+
+  useEffect(() => {
+    if (data?.getOrder.ok) {
+      subscribeToMore({
+        document: ORDER_SUBSCRIPTION,
+        variables: {
+          input: {
+            id: +id,
+          },
+        },
+        // subscriptionData의 타입을 정해주지 않으면 useQuery를 했을 때의 결과값과 타입을 동일하게 여긴다
+        updateQuery: (
+          prev,
+          {
+            subscriptionData: { data },
+          }: { subscriptionData: { data: OnUpdateOrders } }
+        ) => {
+          if (!data) return prev;
+          return {
+            getOrder: {
+              ...prev.getOrder,
+              order: {
+                ...data.updateOrders,
+              },
+            },
+          };
+        },
+      });
+    }
+  }, [data]);
+
   return (
     <div className="flex justify-center mt-4 px-10 container lg:mt-12">
       <Helmet>

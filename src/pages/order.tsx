@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
@@ -7,9 +7,14 @@ import { useParams } from "react-router";
 import { DETAIL_ORDER_FRAGMENT } from "../fragments";
 import { useLoginUser } from "../hooks/useLoginUser";
 import {
+  EditOrderMutation,
+  EditOrderMutationVariables,
+} from "../__generated__/EditOrderMutation";
+import {
   GetOrderQuery,
   GetOrderQueryVariables,
 } from "../__generated__/GetOrderQuery";
+import { OrderStatus, UserRole } from "../__generated__/globalTypes";
 import { OnUpdateOrders } from "../__generated__/OnUpdateOrders";
 
 export const GET_ORDER_QUERY = gql`
@@ -23,6 +28,15 @@ export const GET_ORDER_QUERY = gql`
     }
   }
   ${DETAIL_ORDER_FRAGMENT}
+`;
+
+const EDIT_ORDER_MUTATION = gql`
+  mutation EditOrderMutation($input: EditOrderInput!) {
+    editOrder(input: $input) {
+      ok
+      error
+    }
+  }
 `;
 
 const ORDER_SUBSCRIPTION = gql`
@@ -51,6 +65,21 @@ export const Order = () => {
       },
     },
   });
+  const [editOrder] =
+    useMutation<EditOrderMutation, EditOrderMutationVariables>(
+      EDIT_ORDER_MUTATION
+    );
+
+  const onOwnerBtnClick = (newStatus: OrderStatus) => {
+    editOrder({
+      variables: {
+        input: {
+          id: +id,
+          status: newStatus,
+        },
+      },
+    });
+  };
 
   useEffect(() => {
     if (data?.getOrder.ok) {
@@ -113,19 +142,35 @@ export const Order = () => {
               {data?.getOrder.order?.driver?.email || "Ready to pick up"}
             </span>
           </div>
-          {userData?.loginUser.role === "Client" && (
+          {userData?.loginUser.role === UserRole.Client && (
             <span className=" text-center mt-5 mb-3  text-2xl text-lime-600">
               Status: {data?.getOrder.order?.status}
             </span>
           )}
-          {userData?.loginUser.role === "Owner" && (
+          {userData?.loginUser.role === UserRole.Owner && (
             <>
-              {data?.getOrder.order?.status === "Pending" && (
-                <button className="btn">Accept Order</button>
+              {data?.getOrder.order?.status === OrderStatus.Pending && (
+                <button
+                  onClick={() => onOwnerBtnClick(OrderStatus.Cooking)}
+                  className="btn"
+                >
+                  Accept Order
+                </button>
               )}
-              {data?.getOrder.order?.status === "Cooking" && (
-                <button className="btn">Order Cooked</button>
+              {data?.getOrder.order?.status === OrderStatus.Cooking && (
+                <button
+                  onClick={() => onOwnerBtnClick(OrderStatus.Cooked)}
+                  className="btn"
+                >
+                  Order Cooked
+                </button>
               )}
+              {data?.getOrder.order?.status !== OrderStatus.Pending &&
+                data?.getOrder.order?.status !== OrderStatus.Cooking && (
+                  <span className=" text-center mt-5 mb-3  text-2xl text-lime-600">
+                    Status: {data?.getOrder.order?.status}
+                  </span>
+                )}
             </>
           )}
         </div>

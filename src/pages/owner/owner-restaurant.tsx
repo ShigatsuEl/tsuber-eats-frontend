@@ -1,13 +1,15 @@
-import { useQuery } from "@apollo/client";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useQuery, useSubscription } from "@apollo/client";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useEffect } from "react";
 import { HelmetProvider } from "react-helmet-async";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Dish } from "../../components/dish";
 import Loading from "../../components/loading";
 import { Victory } from "../../components/victory";
 import {
+  DETAIL_ORDER_FRAGMENT,
   DISH_FRAGMENT,
   ORDER_FRAGMENT,
   RESTAURANT_FRAGMENT,
@@ -16,6 +18,7 @@ import {
   GetOwnerRestaurantQuery,
   GetOwnerRestaurantQueryVariables,
 } from "../../__generated__/GetOwnerRestaurantQuery";
+import { OnPendingOrders } from "../../__generated__/OnPendingOrders";
 
 export const GET_OWNER_RESTAURANT_QUERY = gql`
   query GetOwnerRestaurantQuery($input: GetOwnerRestaurantInput!) {
@@ -38,12 +41,22 @@ export const GET_OWNER_RESTAURANT_QUERY = gql`
   ${ORDER_FRAGMENT}
 `;
 
+const PENDING_ORDERS_SUBSCRIPTION = gql`
+  subscription OnPendingOrders {
+    pendingOrders {
+      ...DetailOrderResults
+    }
+  }
+  ${DETAIL_ORDER_FRAGMENT}
+`;
+
 interface IParams {
   id: string;
 }
 
 export const OwnerRestaurant = () => {
   const { id } = useParams<IParams>();
+  const history = useHistory();
   const { data, loading } = useQuery<
     GetOwnerRestaurantQuery,
     GetOwnerRestaurantQueryVariables
@@ -54,6 +67,16 @@ export const OwnerRestaurant = () => {
       },
     },
   });
+  const { data: subscriptionData } = useSubscription<OnPendingOrders>(
+    PENDING_ORDERS_SUBSCRIPTION
+  );
+
+  useEffect(() => {
+    if (subscriptionData?.pendingOrders.id) {
+      history.push(`/orders/${subscriptionData.pendingOrders.id}`);
+    }
+  }, [subscriptionData]);
+  console.log(subscriptionData);
 
   return (
     <React.Fragment>

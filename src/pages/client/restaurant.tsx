@@ -87,6 +87,9 @@ export const Restaurant = () => {
   };
 
   const triggerConfirmOrder = () => {
+    if (createOrderLoading) {
+      return;
+    }
     if (orderItems.length === 0) {
       alert("Please select an order");
       return;
@@ -105,9 +108,6 @@ export const Restaurant = () => {
   };
 
   function onCompleted(data: CreateOrderMutation) {
-    if (createOrderLoading) {
-      return;
-    }
     const {
       createOrder: { ok, orderId },
     } = data;

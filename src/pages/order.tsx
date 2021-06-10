@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router";
 import { DETAIL_ORDER_FRAGMENT } from "../fragments";
+import { useLoginUser } from "../hooks/useLoginUser";
 import {
   GetOrderQuery,
   GetOrderQueryVariables,
@@ -39,6 +40,7 @@ interface IParams {
 
 export const Order = () => {
   const { id } = useParams<IParams>();
+  const { data: userData } = useLoginUser();
   const { data, subscribeToMore } = useQuery<
     GetOrderQuery,
     GetOrderQueryVariables
@@ -111,9 +113,21 @@ export const Order = () => {
               {data?.getOrder.order?.driver?.email || "Ready to pick up"}
             </span>
           </div>
-          <span className=" text-center mt-5 mb-3  text-2xl text-lime-600">
-            Status: {data?.getOrder.order?.status}
-          </span>
+          {userData?.loginUser.role === "Client" && (
+            <span className=" text-center mt-5 mb-3  text-2xl text-lime-600">
+              Status: {data?.getOrder.order?.status}
+            </span>
+          )}
+          {userData?.loginUser.role === "Owner" && (
+            <>
+              {data?.getOrder.order?.status === "Pending" && (
+                <button className="btn">Accept Order</button>
+              )}
+              {data?.getOrder.order?.status === "Cooking" && (
+                <button className="btn">Order Cooked</button>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>

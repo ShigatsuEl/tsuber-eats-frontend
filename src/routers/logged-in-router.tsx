@@ -13,6 +13,7 @@ import { Restaurant } from "../pages/client/restaurant";
 import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
 import { LogOut } from "../pages/logout";
+import { Order } from "../pages/order";
 import { CreateDish } from "../pages/owner/create-dish";
 import { CreateRestaurant } from "../pages/owner/create-restaurant";
 import { OwnerRestaurant } from "../pages/owner/owner-restaurant";
@@ -37,6 +38,10 @@ const UserRouter = [
   {
     path: "/profile/edit",
     component: <EditProfile />,
+  },
+  {
+    path: "/orders/:id",
+    component: <Order />,
   },
 ];
 

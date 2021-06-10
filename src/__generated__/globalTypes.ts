@@ -7,6 +7,14 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum OrderStatus {
+  Cooked = "Cooked",
+  Cooking = "Cooking",
+  Delevered = "Delevered",
+  Pending = "Pending",
+  PickedUp = "PickedUp",
+}
+
 export enum UserRole {
   Client = "Client",
   Delivery = "Delivery",
@@ -63,6 +71,10 @@ export interface EditUserProfileInput {
 export interface GetCategoryInput {
   page?: number | null;
   slug: string;
+}
+
+export interface GetOrderInput {
+  id: number;
 }
 
 export interface GetOwnerRestaurantInput {

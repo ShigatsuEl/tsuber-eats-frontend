@@ -68,14 +68,12 @@ export const Restaurant = () => {
       },
     },
   });
-  const [createOrder] = useMutation<
+  const [createOrder, { loading: createOrderLoading }] = useMutation<
     CreateOrderMutation,
     CreateOrderMutationVariables
   >(CREATE_ORDER_MUTATION, {
     onCompleted,
   });
-  console.log(data);
-  console.log(orderItems);
 
   /* common */
 
@@ -107,6 +105,9 @@ export const Restaurant = () => {
   };
 
   function onCompleted(data: CreateOrderMutation) {
+    if (createOrderLoading) {
+      return;
+    }
     const {
       createOrder: { ok, orderId },
     } = data;

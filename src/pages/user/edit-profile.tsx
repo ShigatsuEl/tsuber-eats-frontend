@@ -62,10 +62,7 @@ export const EditProfile = () => {
         editUserProfileInput: {
           email,
           ...(password !== "" && { password }),
-          ...(latitude &&
-            longitude &&
-            latitude !== 0 &&
-            longitude !== 0 && { location: { latitude, longitude } }),
+          ...(latitude && longitude && { location: { latitude, longitude } }),
         },
       },
     });
@@ -78,14 +75,18 @@ export const EditProfile = () => {
     if (ok && loginUserData) {
       //update cache
       const {
-        loginUser: { id, email: prevEmail },
+        loginUser: { id, email: prevEmail, location },
       } = loginUserData;
       const {
         email: newEmail,
         latitude: newLat,
         longitude: newLng,
       } = getValues();
-      if (prevEmail !== newEmail) {
+      if (
+        prevEmail !== newEmail ||
+        location?.latitude !== newLat ||
+        location?.longitude !== newLng
+      ) {
         client.writeFragment({
           id: `User:${id}`,
           fragment: gql`
@@ -93,8 +94,9 @@ export const EditProfile = () => {
               email
               verified
               location {
+                __typename
                 latitude
-                logitude
+                longitude
               }
             }
           `,
@@ -102,6 +104,7 @@ export const EditProfile = () => {
             email: newEmail,
             verified: false,
             location: {
+              __typename: "UserLocation",
               latitude: newLat,
               longitude: newLng,
             },

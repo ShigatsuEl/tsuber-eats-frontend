@@ -9,6 +9,10 @@ export const LOGIN_USER_QUERY = gql`
       email
       role
       verified
+      location {
+        latitude
+        longitude
+      }
     }
   }
 `;

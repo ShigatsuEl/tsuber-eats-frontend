@@ -62,7 +62,13 @@ export const EditProfile = () => {
         editUserProfileInput: {
           email,
           ...(password !== "" && { password }),
-          ...(latitude && longitude && { location: { latitude, longitude } }),
+          ...(latitude &&
+            longitude && {
+              location: {
+                latitude: Number(latitude),
+                longitude: Number(longitude),
+              },
+            }),
         },
       },
     });
@@ -167,7 +173,10 @@ export const EditProfile = () => {
           placeholder="Password"
         />
         <input
-          {...register("latitude")}
+          {...register("latitude", {
+            validate: (value) =>
+              String(value) !== "0" && String(value) !== "" && value !== 0,
+          })}
           className="input"
           name="latitude"
           type="number"
@@ -175,13 +184,22 @@ export const EditProfile = () => {
           placeholder="Latitude"
         />
         <input
-          {...register("longitude")}
+          {...register("longitude", {
+            validate: (value) =>
+              String(value) !== "0" && String(value) !== "" && value !== 0,
+          })}
           className="input"
           name="longitude"
           type="number"
           step="any"
           placeholder="Longitude"
         />
+        {(errors.latitude?.type === "validate" && (
+          <FormError errorMessage="Please allow access to renew your location" />
+        )) ||
+          (errors.longitude?.type === "validate" && (
+            <FormError errorMessage="Please allow access to renew your location" />
+          ))}
         <Button
           loading={loading}
           canClick={isValid}

@@ -2,6 +2,19 @@
 import React, { useEffect, useState } from "react";
 import GoogleMapReact from "google-map-react";
 import { Delivery } from "../../components/delivery";
+import { gql, useSubscription } from "@apollo/client";
+import { DETAIL_ORDER_FRAGMENT } from "../../fragments";
+import { OnCookedOrders } from "../../__generated__/OnCookedOrders";
+import { Link } from "react-router-dom";
+
+const COOKED_ORDERS_SUBSCRIPTION = gql`
+  subscription OnCookedOrders {
+    cookedOrders {
+      ...DetailOrderResults
+    }
+  }
+  ${DETAIL_ORDER_FRAGMENT}
+`;
 
 interface ICoords {
   latitude: number;
@@ -15,6 +28,9 @@ export const Dashboard = () => {
   });
   const [map, setMap] = useState<google.maps.Map>();
   const [maps, setMaps] = useState<any>();
+  const { data: cookedOrdersData } = useSubscription<OnCookedOrders>(
+    COOKED_ORDERS_SUBSCRIPTION
+  );
 
   const onSuccess = ({
     coords: { latitude, longitude },
@@ -33,7 +49,7 @@ export const Dashboard = () => {
     );
   };
 
-  const onGetRouteClick = () => {
+  const makeRoute = () => {
     if (map) {
       const directionsService = new google.maps.DirectionsService();
       const directionsRenderer = new google.maps.DirectionsRenderer();
@@ -68,6 +84,12 @@ export const Dashboard = () => {
   }, []);
 
   useEffect(() => {
+    if (cookedOrdersData?.cookedOrders.id) {
+      makeRoute();
+    }
+  }, [cookedOrdersData]);
+
+  useEffect(() => {
     if (map && maps) {
       map.panTo(
         new google.maps.LatLng(driverCoords.latitude, driverCoords.longitude)
@@ -100,7 +122,29 @@ export const Dashboard = () => {
           <Delivery lat={driverCoords.latitude} lng={driverCoords.longitude} />
         </GoogleMapReact>
       </div>
-      <button onClick={onGetRouteClick}>Get Route</button>
+      <div className=" max-w-screen-sm mx-auto bg-white relative -top-10 shadow-lg py-8 px-5">
+        {cookedOrdersData?.cookedOrders.restaurant ? (
+          <>
+            <h1 className="text-center  text-3xl font-medium">
+              New Coocked Order
+            </h1>
+            <h1 className="text-center my-3 text-2xl font-medium">
+              Pick it up soon @{" "}
+              {cookedOrdersData?.cookedOrders.restaurant?.name}
+            </h1>
+            <Link
+              to={`/orders/${cookedOrdersData?.cookedOrders.id}`}
+              className="btn w-full  block  text-center mt-5"
+            >
+              Accept Challenge &rarr;
+            </Link>
+          </>
+        ) : (
+          <h1 className="text-center  text-3xl font-medium">
+            No orders yet...
+          </h1>
+        )}
+      </div>
     </div>
   );
 };

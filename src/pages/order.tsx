@@ -112,7 +112,7 @@ export const Order = () => {
   }, [data]);
 
   return (
-    <div className="flex justify-center mt-4 px-10 container lg:mt-12">
+    <div className="flex justify-center mt-4 mx-auto px-10 container lg:mt-12">
       <Helmet>
         <title>Order #{id} | Tsuber Eats</title>
       </Helmet>
@@ -143,7 +143,7 @@ export const Order = () => {
             </span>
           </div>
           {userData?.loginUser.role === UserRole.Client && (
-            <span className=" text-center mt-5 mb-3  text-2xl text-lime-600">
+            <span className="text-center text-2xl text-lime-600">
               Status: {data?.getOrder.order?.status}
             </span>
           )}
@@ -167,11 +167,36 @@ export const Order = () => {
               )}
               {data?.getOrder.order?.status !== OrderStatus.Pending &&
                 data?.getOrder.order?.status !== OrderStatus.Cooking && (
-                  <span className=" text-center mt-5 mb-3  text-2xl text-lime-600">
+                  <span className="text-center text-2xl text-lime-600">
                     Status: {data?.getOrder.order?.status}
                   </span>
                 )}
             </>
+          )}
+          {userData?.loginUser.role === UserRole.Delivery && (
+            <>
+              {data?.getOrder.order?.status === OrderStatus.Cooked && (
+                <button
+                  onClick={() => onOwnerBtnClick(OrderStatus.PickedUp)}
+                  className="btn"
+                >
+                  Picked Up
+                </button>
+              )}
+              {data?.getOrder.order?.status === OrderStatus.PickedUp && (
+                <button
+                  onClick={() => onOwnerBtnClick(OrderStatus.Delevered)}
+                  className="btn"
+                >
+                  Delivered
+                </button>
+              )}
+            </>
+          )}
+          {data?.getOrder.order?.status === OrderStatus.Delevered && (
+            <span className=" text-center text-2xl text-lime-600">
+              Thank you for using Tsuber Eats
+            </span>
           )}
         </div>
       </div>

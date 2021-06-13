@@ -112,15 +112,17 @@ export const OwnerRestaurant = () => {
             </div>
           </div>
           <div className="mt-10 mx-10">
-            <Link
-              to={`/restaurant/${id}/dish/create`}
-              className=" mr-8 text-white bg-gray-800 py-3 px-10"
-            >
-              Add Dish &rarr;
-            </Link>
-            <Link to={``} className=" text-white bg-lime-600 py-3 px-10">
-              Buy Promotion &rarr;
-            </Link>
+            <div className="flex flex-wrap">
+              <Link
+                to={`/restaurant/${id}/dish/create`}
+                className="mr-8 mb-5 text-white bg-gray-800 py-3 px-10 sm:mb-0"
+              >
+                Add Dish &rarr;
+              </Link>
+              <Link to={``} className="text-white bg-lime-600 py-3 px-10">
+                Buy Promotion &rarr;
+              </Link>
+            </div>
             <div className="mt-10">
               {data?.getOwnerRestaurant.restaurant?.menu.length !== 0 && (
                 <div className="grid-container mb-5">

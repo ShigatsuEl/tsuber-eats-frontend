@@ -8,6 +8,9 @@ module.exports = {
       colors: {
         lime: colors.lime,
       },
+      screen: {
+        "3xl": "1900px",
+      },
       width: {
         "space-1/2": "49%",
       },

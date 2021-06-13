@@ -71,6 +71,7 @@ export interface EditOrderInput {
 export interface EditUserProfileInput {
   email?: string | null;
   password?: string | null;
+  location?: UserLocationInputType | null;
 }
 
 export interface GetCategoryInput {
@@ -111,6 +112,11 @@ export interface SearchRestaurantInput {
 
 export interface UpdateOrderInput {
   id: number;
+}
+
+export interface UserLocationInputType {
+  latitude: number;
+  longitude: number;
 }
 
 export interface VerifyEmailInput {

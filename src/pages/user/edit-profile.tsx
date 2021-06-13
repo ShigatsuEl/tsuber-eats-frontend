@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useApolloClient, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
+import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
@@ -26,15 +28,19 @@ export const EDIT_USER_PROFILE_MUTATION = gql`
 interface IFormProps {
   email?: string;
   password?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export const EditProfile = () => {
   const client = useApolloClient();
+  const history = useHistory();
   const { data: loginUserData } = useLoginUser();
   const {
     register,
     handleSubmit,
     getValues,
+    setValue,
     formState: { errors, isValid },
   } = useForm<IFormProps>({
     mode: "onChange",
@@ -48,15 +54,18 @@ export const EditProfile = () => {
   >(EDIT_USER_PROFILE_MUTATION, {
     onCompleted,
   });
-  const history = useHistory();
 
   const onValid = () => {
-    const { email, password } = getValues();
+    const { email, password, latitude, longitude } = getValues();
     editUserProfile({
       variables: {
         editUserProfileInput: {
           email,
           ...(password !== "" && { password }),
+          ...(latitude &&
+            longitude &&
+            latitude !== 0 &&
+            longitude !== 0 && { location: { latitude, longitude } }),
         },
       },
     });
@@ -71,7 +80,11 @@ export const EditProfile = () => {
       const {
         loginUser: { id, email: prevEmail },
       } = loginUserData;
-      const { email: newEmail } = getValues();
+      const {
+        email: newEmail,
+        latitude: newLat,
+        longitude: newLng,
+      } = getValues();
       if (prevEmail !== newEmail) {
         client.writeFragment({
           id: `User:${id}`,
@@ -79,11 +92,19 @@ export const EditProfile = () => {
             fragment EditedUser on User {
               email
               verified
+              location {
+                latitude
+                logitude
+              }
             }
           `,
           data: {
             email: newEmail,
             verified: false,
+            location: {
+              latitude: newLat,
+              longitude: newLng,
+            },
           },
         });
         history.push("/");
@@ -91,8 +112,25 @@ export const EditProfile = () => {
     }
   }
 
+  const onSuccess = ({
+    coords: { latitude, longitude },
+  }: GeolocationPosition) => {
+    setValue("latitude", latitude);
+    setValue("longitude", longitude);
+  };
+
+  const onError = (positionError: GeolocationPositionError) => {
+    console.log(positionError);
+  };
+
+  useEffect(() => {
+    navigator.geolocation.watchPosition(onSuccess, onError, {
+      enableHighAccuracy: true,
+    });
+  }, []);
+
   return (
-    <div className="h-except-header flex flex-col items-center pt-36 2xl:pt-72">
+    <div className="h-except-header flex flex-col items-center pt-36 3xl:pt-72">
       <Helmet>
         <title>Edit Profile | Tsuber Eats</title>
       </Helmet>
@@ -124,6 +162,22 @@ export const EditProfile = () => {
           name="password"
           type="password"
           placeholder="Password"
+        />
+        <input
+          {...register("latitude")}
+          className="input"
+          name="latitude"
+          type="number"
+          step="any"
+          placeholder="Latitude"
+        />
+        <input
+          {...register("longitude")}
+          className="input"
+          name="longitude"
+          type="number"
+          step="any"
+          placeholder="Longitude"
         />
         <Button
           loading={loading}

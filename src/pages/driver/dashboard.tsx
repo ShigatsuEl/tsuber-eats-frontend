@@ -33,6 +33,34 @@ export const Dashboard = () => {
     );
   };
 
+  const onGetRouteClick = () => {
+    if (map) {
+      const directionsService = new google.maps.DirectionsService();
+      const directionsRenderer = new google.maps.DirectionsRenderer();
+      directionsRenderer.setMap(map);
+      directionsService.route(
+        {
+          origin: {
+            location: new google.maps.LatLng(
+              driverCoords.latitude,
+              driverCoords.longitude
+            ),
+          },
+          destination: {
+            location: new google.maps.LatLng(
+              driverCoords.latitude + 0.05,
+              driverCoords.longitude + 0.05
+            ),
+          },
+          travelMode: google.maps.TravelMode.TRANSIT,
+        },
+        (response, _) => {
+          directionsRenderer.setDirections(response);
+        }
+      );
+    }
+  };
+
   useEffect(() => {
     navigator.geolocation.watchPosition(onSuccess, onError, {
       enableHighAccuracy: true,
@@ -72,6 +100,7 @@ export const Dashboard = () => {
           <Delivery lat={driverCoords.latitude} lng={driverCoords.longitude} />
         </GoogleMapReact>
       </div>
+      <button onClick={onGetRouteClick}>Get Route</button>
     </div>
   );
 };

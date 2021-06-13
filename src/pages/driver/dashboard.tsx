@@ -13,7 +13,7 @@ export const Dashboard = () => {
     latitude: 0,
     longitude: 0,
   });
-  const [map, setMap] = useState<any>();
+  const [map, setMap] = useState<google.maps.Map>();
   const [maps, setMaps] = useState<any>();
 
   const onSuccess = ({
@@ -28,7 +28,9 @@ export const Dashboard = () => {
   const onApiLoaded = ({ map, maps }: { map: any; maps: any }) => {
     setMap(map);
     setMaps(maps);
-    map.panTo(new maps.LatLng(driverCoords.latitude, driverCoords.longitude));
+    map.panTo(
+      new google.maps.LatLng(driverCoords.latitude, driverCoords.longitude)
+    );
   };
 
   useEffect(() => {
@@ -39,7 +41,21 @@ export const Dashboard = () => {
 
   useEffect(() => {
     if (map && maps) {
-      map.panTo(new maps.LatLng(driverCoords.latitude, driverCoords.longitude));
+      map.panTo(
+        new google.maps.LatLng(driverCoords.latitude, driverCoords.longitude)
+      );
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode(
+        {
+          location: new google.maps.LatLng(
+            driverCoords.latitude,
+            driverCoords.longitude
+          ),
+        },
+        (response, status) => {
+          console.log(response, status);
+        }
+      );
     }
   }, [driverCoords.latitude, driverCoords.longitude]);
 

@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { HelmetProvider } from "react-helmet-async";
+import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
 import { Button } from "../../components/button";
@@ -13,6 +14,7 @@ import {
 import {
   GetOwnerRestaurantQuery,
   GetOwnerRestaurantQueryVariables,
+  GetOwnerRestaurantQuery_getOwnerRestaurant_restaurant_menu,
 } from "../../__generated__/GetOwnerRestaurantQuery";
 import { GET_OWNER_RESTAURANT_QUERY } from "./owner-restaurant";
 
@@ -41,6 +43,8 @@ export const EditDish = () => {
   const [options, setOptions] = useState<
     { id: number; subOptions: number[] }[]
   >([]);
+  const [dish, setDish] =
+    useState<GetOwnerRestaurantQuery_getOwnerRestaurant_restaurant_menu>();
   const { id, dishId } = useParams<IParams>();
   const history = useHistory();
   const { register, getValues, handleSubmit, formState, setValue } =
@@ -68,7 +72,6 @@ export const EditDish = () => {
       },
     ],
   });
-  console.log(restaurantData);
 
   const onValid = () => {
     const { name, price, description, ...rest } = getValues();
@@ -146,13 +149,39 @@ export const EditDish = () => {
     setValue(`${idToDelete}-option-choice-extra`, "");
   };
 
-  useEffect(() => {});
+  useEffect(() => {
+    if (restaurantData) {
+      const findData = restaurantData.getOwnerRestaurant.restaurant?.menu.find(
+        (dish) => dish.id === +dishId
+      );
+      setDish(findData);
+    }
+  }, [restaurantData]);
+
+  useEffect(() => {
+    if (dish) {
+      setValue("name", dish.name);
+      setValue("price", dish.price.toString());
+      setValue("description", dish.description);
+      dish.options?.forEach((option, index) => {
+        setValue(`${index}-option-name`, option.name);
+        setValue(`${index}-option-extra`, option.extra!.toString());
+        option.choices?.forEach((choice, subIndex) => {
+          setValue(`${index}-${subIndex}-option-choice-name`, choice.name);
+          setValue(
+            `${index}-${subIndex}-option-choice-extra`,
+            choice.extra!.toString()
+          );
+        });
+      });
+    }
+  }, [dish]);
 
   return (
     <div className="flex flex-col items-center px-10">
-      <HelmetProvider>
-        <title>Create Dish | Tsuber Eats</title>
-      </HelmetProvider>
+      <Helmet>
+        <title>Edit Dish | Tsuber Eats</title>
+      </Helmet>
       <h1 className="mb-5 font-semibold text-3xl">Edit Dish</h1>
       <form
         onSubmit={handleSubmit(onValid)}
@@ -200,6 +229,82 @@ export const EditDish = () => {
             Add Dish Option
           </span>
         </div>
+        {dish &&
+          dish.options?.length !== 0 &&
+          dish.options?.map((dishOption, index) => (
+            <div key={index} className="mb-5">
+              <div className="flex justify-between mb-2 w-full">
+                <input
+                  {...register(`${index}-option-name`)}
+                  className="input w-space-1/2"
+                  name={`${index}-option-name`}
+                  type="text"
+                  placeholder="Option Name"
+                />
+                <input
+                  {...register(`${index}-option-extra`, { min: 0 })}
+                  className="input w-space-1/2"
+                  name={`${index}-option-extra`}
+                  type="number"
+                  min={0}
+                  defaultValue={0}
+                  placeholder="Option Extra"
+                />
+              </div>
+              <div className="flex justify-end mb-2">
+                <span
+                  onClick={() => onAddSubOptionClick(index)}
+                  className="btn"
+                >
+                  Add Sub Option
+                </span>
+                <span
+                  onClick={() => onRemoveOptionClick(index)}
+                  className="btn ml-5"
+                >
+                  Remove Option
+                </span>
+              </div>
+              {dishOption &&
+                dishOption.choices?.length !== 0 &&
+                dishOption.choices?.map((choice, subIndex) => (
+                  <div
+                    key={subIndex}
+                    className="flex flex-col items-end mb-2 w-full"
+                  >
+                    <div className="flex justify-between mb-2 sm:flex-none">
+                      <input
+                        {...register(`${index}-${subIndex}-option-choice-name`)}
+                        className="input w-space-1/2 sm:w-auto sm:mr-3"
+                        name={`${index}-${subIndex}-option-choice-name`}
+                        type="text"
+                        placeholder="Sub Option Name"
+                      />
+                      <input
+                        {...register(
+                          `${index}-${subIndex}-option-choice-extra`,
+                          {
+                            min: 0,
+                          }
+                        )}
+                        className="input w-space-1/2 sm:w-auto"
+                        name={`${index}-${subIndex}-option-choice-extra`}
+                        type="number"
+                        min={0}
+                        defaultValue={0}
+                        placeholder="Sub Option Extra"
+                      />
+                    </div>
+                    <span
+                      onClick={() => onRemoveSubOptionClick(subIndex)}
+                      className="btn ml-5"
+                    >
+                      Remove Sub Option
+                    </span>
+                  </div>
+                ))}
+            </div>
+          ))}
         {options.length !== 0 &&
           options.map((option) => (
             <div key={option.id} className="mb-5">
@@ -274,7 +379,7 @@ export const EditDish = () => {
         <Button
           canClick={formState.isValid}
           loading={loading}
-          actionText="Create Dish"
+          actionText="Edit Dish"
         />
         {data?.editDish?.error && (
           <FormError errorMessage={data.editDish.error} />

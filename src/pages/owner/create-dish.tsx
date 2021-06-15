@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useState } from "react";
-import { HelmetProvider } from "react-helmet-async";
+import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router";
 import { Button } from "../../components/button";
@@ -132,9 +132,9 @@ export const CreateDish = () => {
 
   return (
     <div className="flex flex-col items-center px-10">
-      <HelmetProvider>
+      <Helmet>
         <title>Create Dish | Tsuber Eats</title>
-      </HelmetProvider>
+      </Helmet>
       <h1 className="mb-5 font-semibold text-3xl">Create Dish</h1>
       <form
         onSubmit={handleSubmit(onValid)}

@@ -49,7 +49,7 @@ export const Dish: React.FC<IDishProps> = ({
         <div
           data-id="dish"
           onClick={onItemClick}
-          className={`group flex flex-col border-2 border-gray-400 pt-4 px-5 pb-6 transition ${
+          className={`group flex flex-col h-full border-2 border-gray-400 pt-4 px-5 pb-6 transition ${
             isSelected ? "bg-lime-600" : "bg-lime-400 hover:border-gray-800"
           } ${isOrderStart && "cursor-pointer"}`}
         >
@@ -72,7 +72,7 @@ export const Dish: React.FC<IDishProps> = ({
         <Link to={`/restaurant/${restaurantId}/dish/edit/${id}`}>
           <div
             data-id="dish"
-            className={`group flex flex-col border-2 border-gray-400 pt-4 px-5 pb-6 transition bg-lime-400 hover:border-gray-800`}
+            className={`group flex flex-col h-full border-2 border-gray-400 pt-4 px-5 pb-6 transition bg-lime-400 hover:border-gray-800`}
           >
             <h2 className="mb-2 text-3xl">{name}</h2>
             <span className="mb-10 opacity-70">{description}</span>

@@ -83,6 +83,10 @@ const OwnerRouter = [
     path: "/restaurant/:id/dish/create",
     component: <CreateDish />,
   },
+  {
+    path: "/restaurant/:id/dish/edit/:dishId",
+    component: <CreateDish />,
+  },
 ];
 
 const DriverRouter = [

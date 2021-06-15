@@ -76,7 +76,6 @@ export const OwnerRestaurant = () => {
       history.push(`/orders/${subscriptionData.pendingOrders.id}`);
     }
   }, [subscriptionData]);
-  console.log(subscriptionData);
 
   return (
     <React.Fragment>
@@ -130,9 +129,11 @@ export const OwnerRestaurant = () => {
                     (dish, index) => (
                       <Dish
                         key={index}
+                        id={dish.id}
                         name={dish.name}
                         price={dish.price}
                         description={dish.description}
+                        restaurantId={data.getOwnerRestaurant.restaurant?.id}
                       />
                     )
                   )}

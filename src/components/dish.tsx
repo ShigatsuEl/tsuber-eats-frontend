@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { GetRestaurantQuery_getRestaurant_restaurant_menu_options } from "../__generated__/GetRestaurantQuery";
 
 interface IDishProps {
@@ -10,6 +11,7 @@ interface IDishProps {
   isOrderStart?: boolean;
   isSelected?: boolean;
   options?: GetRestaurantQuery_getRestaurant_restaurant_menu_options[] | null;
+  restaurantId?: number;
   addItemToOrder?: (dishId: number) => void;
   removeItemFromOrder?: (dishId: number) => void;
 }
@@ -23,6 +25,7 @@ export const Dish: React.FC<IDishProps> = ({
   isOrderStart = false,
   isSelected = false,
   options,
+  restaurantId,
   addItemToOrder,
   removeItemFromOrder,
   children: dishOptions,
@@ -41,27 +44,58 @@ export const Dish: React.FC<IDishProps> = ({
   };
 
   return (
-    <div
-      data-id="dish"
-      onClick={onItemClick}
-      className={`group flex flex-col border-2 border-gray-400 pt-4 px-5 pb-6 transition ${
-        isSelected ? "bg-lime-600" : "bg-lime-400 hover:border-gray-800"
-      } ${isOrderStart && "cursor-pointer"}`}
-    >
-      <h2 className="mb-2 text-3xl">{name}</h2>
-      <span className="mb-10 opacity-70">{description}</span>
-      <span className="inline-block mb-5">{price}￦</span>
-      {isCustomer && options !== null && (
+    <React.Fragment>
+      {!isCustomer ? (
+        <Link to={`/restaurant/${restaurantId}/dish/edit/${id}`}>
+          <div
+            data-id="dish"
+            onClick={onItemClick}
+            className={`group flex flex-col border-2 border-gray-400 pt-4 px-5 pb-6 transition ${
+              isSelected ? "bg-lime-600" : "bg-lime-400 hover:border-gray-800"
+            } ${isOrderStart && "cursor-pointer"}`}
+          >
+            <h2 className="mb-2 text-3xl">{name}</h2>
+            <span className="mb-10 opacity-70">{description}</span>
+            <span className="inline-block mb-5">{price}￦</span>
+            {isCustomer && options !== null && (
+              <div
+                data-id="option"
+                className={`p-2 bg-lime-300 transition group-hover:shadow-xl ${
+                  isOrderStart && isSelected
+                    ? "cursor-pointer"
+                    : "cursor-default"
+                }`}
+              >
+                <h5 className="mb-3 font-semibold text-lg">DISH OPTIONS</h5>
+                {dishOptions}
+              </div>
+            )}
+          </div>
+        </Link>
+      ) : (
         <div
-          data-id="option"
-          className={`p-2 bg-lime-300 transition group-hover:shadow-xl ${
-            isOrderStart && isSelected ? "cursor-pointer" : "cursor-default"
-          }`}
+          data-id="dish"
+          onClick={onItemClick}
+          className={`group flex flex-col border-2 border-gray-400 pt-4 px-5 pb-6 transition ${
+            isSelected ? "bg-lime-600" : "bg-lime-400 hover:border-gray-800"
+          } ${isOrderStart && "cursor-pointer"}`}
         >
-          <h5 className="mb-3 font-semibold text-lg">DISH OPTIONS</h5>
-          {dishOptions}
+          <h2 className="mb-2 text-3xl">{name}</h2>
+          <span className="mb-10 opacity-70">{description}</span>
+          <span className="inline-block mb-5">{price}￦</span>
+          {isCustomer && options !== null && (
+            <div
+              data-id="option"
+              className={`p-2 bg-lime-300 transition group-hover:shadow-xl ${
+                isOrderStart && isSelected ? "cursor-pointer" : "cursor-default"
+              }`}
+            >
+              <h5 className="mb-3 font-semibold text-lg">DISH OPTIONS</h5>
+              {dishOptions}
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </React.Fragment>
   );
 };

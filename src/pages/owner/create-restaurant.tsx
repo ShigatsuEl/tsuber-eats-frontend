@@ -144,6 +144,9 @@ export const CreateRestaurant = () => {
           name="categoryName"
           placeholder="Category Name"
         />
+        <label htmlFor="coverImg" className="text-lg">
+          Cover Image
+        </label>
         <input
           {...register("coverImg", { required: true })}
           className="input mb-3"

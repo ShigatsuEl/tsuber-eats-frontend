@@ -2,9 +2,10 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import { Button } from "../../components/button";
 import { FormError } from "../../components/form-error";
 import {
@@ -39,12 +40,36 @@ interface IForm {
   [key: string]: string;
 }
 
+interface IChoices {
+  __typename: "DishChoice";
+  id: string;
+  name: string;
+  extra: number | null;
+}
+
+interface IOptions {
+  __typename: "DishOption";
+  id: string;
+  name: string;
+  extra: number | null;
+  choices: IChoices[] | null;
+}
+
+interface IDish {
+  __typename: "Dish";
+  id: number;
+  name: string;
+  price: number;
+  photo: string | null;
+  description: string;
+  options: IOptions[] | null;
+}
+
 export const EditDish = () => {
   const [options, setOptions] = useState<
     { id: number; subOptions: number[] }[]
   >([]);
-  const [dish, setDish] =
-    useState<GetOwnerRestaurantQuery_getOwnerRestaurant_restaurant_menu>();
+  const [dish, setDish] = useState<IDish>();
   const { id, dishId } = useParams<IParams>();
   const history = useHistory();
   const { register, getValues, handleSubmit, formState, setValue } =
@@ -72,9 +97,10 @@ export const EditDish = () => {
       },
     ],
   });
-
+  console.log(dish);
   const onValid = () => {
     const { name, price, description, ...rest } = getValues();
+    console.log(rest);
     const optionObject = options.map((option) => ({
       name: rest[`${option.id}-option-name`],
       extra: +rest[`${option.id}-option-extra`],
@@ -83,25 +109,33 @@ export const EditDish = () => {
         extra: +rest[`${subOption}-option-choice-extra`],
       })),
     }));
-    editDish({
+    const dishOptionObject = dish!.options?.map((dishOption, index) => ({
+      name: rest[`${index}-option-name`],
+      extra: +rest[`${index}-option-extra`],
+      choices: dishOption!.choices?.map((_, subIndex) => ({
+        name: rest[`${index}-${subIndex}-option-choice-name`],
+        extra: +rest[`${index}-${subIndex}-option-choice-extra`],
+      })),
+    }));
+    /* editDish({
       variables: {
         input: {
           dishId: +dishId,
           name,
           price: +price,
           description,
-          options: optionObject,
+          options: [...optionObject, ...dishOptionObject!],
         },
       },
     });
-    history.goBack();
+    history.goBack(); */
   };
 
   const onAddDishOptionClick = () => {
     setOptions((current) => [{ id: Date.now(), subOptions: [] }, ...current]);
   };
 
-  const onAddSubOptionClick = (id: number) => {
+  const onAddSubOptionClick = (id: number | string) => {
     setOptions((current) =>
       current.map((option) => {
         if (option.id === id) {
@@ -115,46 +149,99 @@ export const EditDish = () => {
     );
   };
 
-  const onRemoveOptionClick = (idToDelete: number) => {
-    setOptions((current) =>
-      // 삭제하는 옵션 중 서브 옵션이 있다면 서브옵션까지 전부 값 초기화
-      current
-        .map((option) => {
-          if (option.id === idToDelete) {
-            option.subOptions.map((subOption) => {
-              setValue(`${subOption}-option-choice-name`, "");
-              setValue(`${subOption}-option-choice-name`, "");
-              return subOption;
+  const onRemoveOptionClick = (
+    idxToDelete: number | string,
+    optionName?: string
+  ) => {
+    if (
+      typeof idxToDelete === "number" &&
+      idxToDelete.toString().length === 13
+    ) {
+      setOptions((current) =>
+        // 삭제하는 옵션 중 서브 옵션이 있다면 서브옵션까지 전부 값 초기화
+        current
+          .map((option) => {
+            if (option.id === idxToDelete) {
+              option.subOptions.map((subOption) => {
+                setValue(`${subOption}-option-choice-name`, "");
+                setValue(`${subOption}-option-choice-name`, "");
+                return subOption;
+              });
+            }
+            return option;
+          })
+          .filter((option) => option.id !== idxToDelete)
+      );
+    } else {
+      setDish((current) => ({
+        ...current!,
+        options: current!
+          .options!.map((option) => {
+            option.choices?.forEach((choice) => {
+              setValue(`${choice.id}-option-choice-name`, "");
+              setValue(`${choice.id}-option-choice-extra`, "");
             });
-          }
-          return option;
-        })
-        .filter((option) => option.id !== idToDelete)
-    );
-    setValue(`${idToDelete}-option-name`, "");
-    setValue(`${idToDelete}-option-extra`, "");
+            return option;
+          })
+          .filter((option) => option.name !== optionName),
+      }));
+    }
+    setValue(`${idxToDelete}-option-name`, "");
+    setValue(`${idxToDelete}-option-extra`, "");
   };
 
-  const onRemoveSubOptionClick = (idToDelete: number) => {
-    setOptions((current) =>
-      // 서브 옵션 삭제
-      current.map((option) => ({
-        id: option.id,
-        subOptions: option.subOptions.filter(
-          (subOption) => subOption !== idToDelete
-        ),
-      }))
-    );
-    setValue(`${idToDelete}-option-choice-name`, "");
-    setValue(`${idToDelete}-option-choice-extra`, "");
+  const onRemoveSubOptionClick = (
+    idxToDelete: number | string,
+    subIdxToDelete?: number | string,
+    choiceName?: string
+  ) => {
+    if (idxToDelete.toString().length === 13) {
+      // 새로 추가한 서브 옵션들을 삭제할 때
+      setOptions((current) =>
+        // 서브 옵션 삭제
+        current.map((option) => ({
+          id: option.id,
+          subOptions: option.subOptions.filter(
+            (subOption) => subOption !== idxToDelete
+          ),
+        }))
+      );
+      setValue(`${idxToDelete}-option-choice-name`, "");
+      setValue(`${idxToDelete}-option-choice-extra`, "");
+    } else {
+      // 기존 메뉴의 서브 옵션들을 삭제할 때
+      setDish((current) => ({
+        ...current!,
+        options: current!.options!.map((option) => ({
+          ...option!,
+          choices: option.choices!.filter(
+            (choice) => choice.name !== choiceName
+          ),
+        })),
+      }));
+      setValue(`${subIdxToDelete}-option-choice-name`, "");
+      setValue(`${subIdxToDelete}-option-choice-extra`, "");
+    }
   };
 
   useEffect(() => {
     if (restaurantData) {
+      let result: IDish;
       const findData = restaurantData.getOwnerRestaurant.restaurant?.menu.find(
         (dish) => dish.id === +dishId
       );
-      setDish(findData);
+      result = {
+        ...findData!,
+        options: findData!.options!.map((option) => ({
+          ...option,
+          id: uuidv4(),
+          choices: option.choices!.map((choice) => ({
+            ...choice,
+            id: uuidv4(),
+          })),
+        })),
+      };
+      setDish(result);
     }
   }, [restaurantData]);
 
@@ -163,13 +250,13 @@ export const EditDish = () => {
       setValue("name", dish.name);
       setValue("price", dish.price.toString());
       setValue("description", dish.description);
-      dish.options?.forEach((option, index) => {
-        setValue(`${index}-option-name`, option.name);
-        setValue(`${index}-option-extra`, option.extra!.toString());
-        option.choices?.forEach((choice, subIndex) => {
-          setValue(`${index}-${subIndex}-option-choice-name`, choice.name);
+      dish.options?.forEach((option) => {
+        setValue(`${option.id}-option-name`, option.name);
+        setValue(`${option.id}-option-extra`, option.extra!.toString());
+        option.choices?.forEach((choice) => {
+          setValue(`${choice.id}-option-choice-name`, choice.name);
           setValue(
-            `${index}-${subIndex}-option-choice-extra`,
+            `${choice.id}-option-choice-extra`,
             choice.extra!.toString()
           );
         });
@@ -229,82 +316,6 @@ export const EditDish = () => {
             Add Dish Option
           </span>
         </div>
-        {dish &&
-          dish.options?.length !== 0 &&
-          dish.options?.map((dishOption, index) => (
-            <div key={index} className="mb-5">
-              <div className="flex justify-between mb-2 w-full">
-                <input
-                  {...register(`${index}-option-name`)}
-                  className="input w-space-1/2"
-                  name={`${index}-option-name`}
-                  type="text"
-                  placeholder="Option Name"
-                />
-                <input
-                  {...register(`${index}-option-extra`, { min: 0 })}
-                  className="input w-space-1/2"
-                  name={`${index}-option-extra`}
-                  type="number"
-                  min={0}
-                  defaultValue={0}
-                  placeholder="Option Extra"
-                />
-              </div>
-              <div className="flex justify-end mb-2">
-                <span
-                  onClick={() => onAddSubOptionClick(index)}
-                  className="btn"
-                >
-                  Add Sub Option
-                </span>
-                <span
-                  onClick={() => onRemoveOptionClick(index)}
-                  className="btn ml-5"
-                >
-                  Remove Option
-                </span>
-              </div>
-              {dishOption &&
-                dishOption.choices?.length !== 0 &&
-                dishOption.choices?.map((choice, subIndex) => (
-                  <div
-                    key={subIndex}
-                    className="flex flex-col items-end mb-2 w-full"
-                  >
-                    <div className="flex justify-between mb-2 sm:flex-none">
-                      <input
-                        {...register(`${index}-${subIndex}-option-choice-name`)}
-                        className="input w-space-1/2 sm:w-auto sm:mr-3"
-                        name={`${index}-${subIndex}-option-choice-name`}
-                        type="text"
-                        placeholder="Sub Option Name"
-                      />
-                      <input
-                        {...register(
-                          `${index}-${subIndex}-option-choice-extra`,
-                          {
-                            min: 0,
-                          }
-                        )}
-                        className="input w-space-1/2 sm:w-auto"
-                        name={`${index}-${subIndex}-option-choice-extra`}
-                        type="number"
-                        min={0}
-                        defaultValue={0}
-                        placeholder="Sub Option Extra"
-                      />
-                    </div>
-                    <span
-                      onClick={() => onRemoveSubOptionClick(subIndex)}
-                      className="btn ml-5"
-                    >
-                      Remove Sub Option
-                    </span>
-                  </div>
-                ))}
-            </div>
-          ))}
         {options.length !== 0 &&
           options.map((option) => (
             <div key={option.id} className="mb-5">
@@ -368,6 +379,87 @@ export const EditDish = () => {
                     </div>
                     <span
                       onClick={() => onRemoveSubOptionClick(subOption)}
+                      className="btn ml-5"
+                    >
+                      Remove Sub Option
+                    </span>
+                  </div>
+                ))}
+            </div>
+          ))}
+        {dish &&
+          dish.options?.length !== 0 &&
+          dish.options?.map((dishOption) => (
+            <div key={dishOption.id} className="mb-5">
+              <div className="flex justify-between mb-2 w-full">
+                <input
+                  {...register(`${dishOption.id}-option-name`)}
+                  className="input w-space-1/2"
+                  name={`${dishOption.id}-option-name`}
+                  type="text"
+                  placeholder="Option Name"
+                />
+                <input
+                  {...register(`${dishOption.id}-option-extra`, { min: 0 })}
+                  className="input w-space-1/2"
+                  name={`${dishOption.id}-option-extra`}
+                  type="number"
+                  min={0}
+                  defaultValue={0}
+                  placeholder="Option Extra"
+                />
+              </div>
+              <div className="flex justify-end mb-2">
+                <span
+                  onClick={() => onAddSubOptionClick(dishOption.id)}
+                  className="btn"
+                >
+                  Add Sub Option
+                </span>
+                <span
+                  onClick={() =>
+                    onRemoveOptionClick(dishOption.id, dishOption.name)
+                  }
+                  className="btn ml-5"
+                >
+                  Remove Option
+                </span>
+              </div>
+              {dishOption &&
+                dishOption.choices?.length !== 0 &&
+                dishOption.choices?.map((choice) => (
+                  <div
+                    key={choice.id}
+                    className="flex flex-col items-end mb-2 w-full"
+                  >
+                    <div className="flex justify-between mb-2 sm:flex-none">
+                      <input
+                        {...register(`${choice.id}-option-choice-name`)}
+                        className="input w-space-1/2 sm:w-auto sm:mr-3"
+                        name={`${choice.id}-option-choice-name`}
+                        type="text"
+                        placeholder="Sub Option Name"
+                      />
+                      <input
+                        {...register(`${choice.id}-option-choice-extra`, {
+                          min: 0,
+                        })}
+                        className="input w-space-1/2 sm:w-auto"
+                        name={`${choice.id}-option-choice-extra`}
+                        type="number"
+                        min={0}
+                        defaultValue={0}
+                        placeholder="Sub Option Extra"
+                      />
+                    </div>
+                    <span
+                      onClick={() =>
+                        onRemoveSubOptionClick(
+                          dishOption.id,
+                          choice.id,
+                          choice.name
+                        )
+                      }
                       className="btn ml-5"
                     >
                       Remove Sub Option

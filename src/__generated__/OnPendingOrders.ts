@@ -9,9 +9,16 @@ import { OrderStatus } from "./globalTypes";
 // GraphQL subscription operation: OnPendingOrders
 // ====================================================
 
+export interface OnPendingOrders_pendingOrders_customer_location {
+  __typename: "UserLocation";
+  latitude: number;
+  longitude: number;
+}
+
 export interface OnPendingOrders_pendingOrders_customer {
   __typename: "User";
   email: string;
+  location: OnPendingOrders_pendingOrders_customer_location | null;
 }
 
 export interface OnPendingOrders_pendingOrders_driver {

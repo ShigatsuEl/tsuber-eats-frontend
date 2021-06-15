@@ -9,9 +9,16 @@ import { GetOrderInput, OrderStatus } from "./globalTypes";
 // GraphQL query operation: GetOrderQuery
 // ====================================================
 
+export interface GetOrderQuery_getOrder_order_customer_location {
+  __typename: "UserLocation";
+  latitude: number;
+  longitude: number;
+}
+
 export interface GetOrderQuery_getOrder_order_customer {
   __typename: "User";
   email: string;
+  location: GetOrderQuery_getOrder_order_customer_location | null;
 }
 
 export interface GetOrderQuery_getOrder_order_driver {

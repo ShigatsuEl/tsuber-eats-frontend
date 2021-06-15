@@ -9,9 +9,16 @@ import { OrderStatus } from "./globalTypes";
 // GraphQL subscription operation: OnCookedOrders
 // ====================================================
 
+export interface OnCookedOrders_cookedOrders_customer_location {
+  __typename: "UserLocation";
+  latitude: number;
+  longitude: number;
+}
+
 export interface OnCookedOrders_cookedOrders_customer {
   __typename: "User";
   email: string;
+  location: OnCookedOrders_cookedOrders_customer_location | null;
 }
 
 export interface OnCookedOrders_cookedOrders_driver {

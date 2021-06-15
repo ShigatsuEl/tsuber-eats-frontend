@@ -40,6 +40,7 @@ export const Dashboard = () => {
     latitude: 0,
     longitude: 0,
   });
+  const [location, setLocation] = useState("");
   const [map, setMap] = useState<google.maps.Map>();
   const [maps, setMaps] = useState<any>();
   const { data: cookedOrdersData } = useSubscription<OnCookedOrders>(
@@ -61,6 +62,7 @@ export const Dashboard = () => {
   const onError = (positionError: GeolocationPositionError) => {
     console.log(positionError);
   };
+
   const onApiLoaded = ({ map, maps }: { map: any; maps: any }) => {
     setMap(map);
     setMaps(maps);
@@ -84,8 +86,8 @@ export const Dashboard = () => {
           },
           destination: {
             location: new google.maps.LatLng(
-              driverCoords.latitude + 0.05,
-              driverCoords.longitude + 0.05
+              cookedOrdersData?.cookedOrders.customer?.location?.latitude!,
+              cookedOrdersData?.cookedOrders.customer?.location?.longitude
             ),
           },
           travelMode: google.maps.TravelMode.TRANSIT,
@@ -120,31 +122,30 @@ export const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    console.log(cookedOrdersData);
     if (cookedOrdersData?.cookedOrders.id) {
       makeRoute();
     }
-  }, [cookedOrdersData]);
-
-  useEffect(() => {
     if (map && maps) {
       map.panTo(
-        new google.maps.LatLng(driverCoords.latitude, driverCoords.longitude)
+        new google.maps.LatLng(
+          cookedOrdersData?.cookedOrders.customer?.location?.latitude!,
+          cookedOrdersData?.cookedOrders.customer?.location?.longitude
+        )
       );
       const geocoder = new google.maps.Geocoder();
       geocoder.geocode(
         {
           location: new google.maps.LatLng(
-            driverCoords.latitude,
-            driverCoords.longitude
+            cookedOrdersData?.cookedOrders.customer?.location?.latitude!,
+            cookedOrdersData?.cookedOrders.customer?.location?.longitude
           ),
         },
         (response, status) => {
-          // console.log(response, status);
+          setLocation(response![0].formatted_address);
         }
       );
     }
-  }, [driverCoords.latitude, driverCoords.longitude]);
+  }, [cookedOrdersData]);
 
   return (
     <div>
@@ -168,6 +169,9 @@ export const Dashboard = () => {
             <h1 className="text-center my-3 text-2xl font-medium">
               Pick it up soon @{" "}
               {cookedOrdersData?.cookedOrders.restaurant?.name}
+            </h1>
+            <h1 className="text-center my-3 text-2xl font-medium">
+              Arrive at {location}
             </h1>
             <button
               onClick={() => triggerMutation(cookedOrdersData?.cookedOrders.id)}

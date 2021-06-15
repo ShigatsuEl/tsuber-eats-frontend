@@ -56,6 +56,10 @@ export const DETAIL_ORDER_FRAGMENT = gql`
     total
     customer {
       email
+      location {
+        latitude
+        longitude
+      }
     }
     driver {
       email

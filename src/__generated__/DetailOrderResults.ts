@@ -9,9 +9,16 @@ import { OrderStatus } from "./globalTypes";
 // GraphQL fragment: DetailOrderResults
 // ====================================================
 
+export interface DetailOrderResults_customer_location {
+  __typename: "UserLocation";
+  latitude: number;
+  longitude: number;
+}
+
 export interface DetailOrderResults_customer {
   __typename: "User";
   email: string;
+  location: DetailOrderResults_customer_location | null;
 }
 
 export interface DetailOrderResults_driver {

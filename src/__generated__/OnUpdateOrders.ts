@@ -9,9 +9,16 @@ import { UpdateOrderInput, OrderStatus } from "./globalTypes";
 // GraphQL subscription operation: OnUpdateOrders
 // ====================================================
 
+export interface OnUpdateOrders_updateOrders_customer_location {
+  __typename: "UserLocation";
+  latitude: number;
+  longitude: number;
+}
+
 export interface OnUpdateOrders_updateOrders_customer {
   __typename: "User";
   email: string;
+  location: OnUpdateOrders_updateOrders_customer_location | null;
 }
 
 export interface OnUpdateOrders_updateOrders_driver {

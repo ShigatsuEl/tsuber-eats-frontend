@@ -135,7 +135,7 @@ export const CreateDish = () => {
       <HelmetProvider>
         <title>Create Dish | Tsuber Eats</title>
       </HelmetProvider>
-      <h1 className="mb-5 font-semibold text-3xl">Create Restaurant</h1>
+      <h1 className="mb-5 font-semibold text-3xl">Create Dish</h1>
       <form
         onSubmit={handleSubmit(onValid)}
         className="grid gap-3 mt-5 mb-3 w-full max-w-screen-sm"

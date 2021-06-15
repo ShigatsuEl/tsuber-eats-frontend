@@ -373,6 +373,7 @@ export const Restaurant = () => {
                       index={index}
                       option={option}
                       dish={dish}
+                      isCustomer={true}
                       isOrderStart={isOrderStart}
                       isSelected={isOptionSelected(dish.id, option.name)}
                       addOptionToItem={() =>
@@ -386,6 +387,7 @@ export const Restaurant = () => {
                             key={index}
                             name={choice.name}
                             extra={choice.extra}
+                            isCustomer={true}
                             isOrderStart={isOrderStart}
                             isOptionChoiceSelected={isOptionChoiceSelected(
                               dish.id,

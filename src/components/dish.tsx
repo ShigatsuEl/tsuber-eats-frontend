@@ -45,34 +45,7 @@ export const Dish: React.FC<IDishProps> = ({
 
   return (
     <React.Fragment>
-      {!isCustomer ? (
-        <Link to={`/restaurant/${restaurantId}/dish/edit/${id}`}>
-          <div
-            data-id="dish"
-            onClick={onItemClick}
-            className={`group flex flex-col border-2 border-gray-400 pt-4 px-5 pb-6 transition ${
-              isSelected ? "bg-lime-600" : "bg-lime-400 hover:border-gray-800"
-            } ${isOrderStart && "cursor-pointer"}`}
-          >
-            <h2 className="mb-2 text-3xl">{name}</h2>
-            <span className="mb-10 opacity-70">{description}</span>
-            <span className="inline-block mb-5">{price}￦</span>
-            {isCustomer && options !== null && (
-              <div
-                data-id="option"
-                className={`p-2 bg-lime-300 transition group-hover:shadow-xl ${
-                  isOrderStart && isSelected
-                    ? "cursor-pointer"
-                    : "cursor-default"
-                }`}
-              >
-                <h5 className="mb-3 font-semibold text-lg">DISH OPTIONS</h5>
-                {dishOptions}
-              </div>
-            )}
-          </div>
-        </Link>
-      ) : (
+      {isCustomer ? (
         <div
           data-id="dish"
           onClick={onItemClick}
@@ -83,7 +56,7 @@ export const Dish: React.FC<IDishProps> = ({
           <h2 className="mb-2 text-3xl">{name}</h2>
           <span className="mb-10 opacity-70">{description}</span>
           <span className="inline-block mb-5">{price}￦</span>
-          {isCustomer && options !== null && (
+          {options !== null && (
             <div
               data-id="option"
               className={`p-2 bg-lime-300 transition group-hover:shadow-xl ${
@@ -95,6 +68,26 @@ export const Dish: React.FC<IDishProps> = ({
             </div>
           )}
         </div>
+      ) : (
+        <Link to={`/restaurant/${restaurantId}/dish/edit/${id}`}>
+          <div
+            data-id="dish"
+            className={`group flex flex-col border-2 border-gray-400 pt-4 px-5 pb-6 transition bg-lime-400 hover:border-gray-800`}
+          >
+            <h2 className="mb-2 text-3xl">{name}</h2>
+            <span className="mb-10 opacity-70">{description}</span>
+            <span className="inline-block mb-5">{price}￦</span>
+            {options !== null && (
+              <div
+                data-id="option"
+                className={`p-2 bg-lime-300 transition group-hover:shadow-xl`}
+              >
+                <h5 className="mb-3 font-semibold text-lg">DISH OPTIONS</h5>
+                {dishOptions}
+              </div>
+            )}
+          </div>
+        </Link>
       )}
     </React.Fragment>
   );

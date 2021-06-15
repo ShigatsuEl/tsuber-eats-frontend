@@ -17,6 +17,7 @@ import { LogOut } from "../pages/logout";
 import { Order } from "../pages/order";
 import { CreateDish } from "../pages/owner/create-dish";
 import { CreateRestaurant } from "../pages/owner/create-restaurant";
+import { EditDish } from "../pages/owner/edit-dish";
 import { OwnerRestaurant } from "../pages/owner/owner-restaurant";
 import { OwnerRestaurants } from "../pages/owner/owner-restaurants";
 import { ConfirmEmail } from "../pages/user/confirm-email";
@@ -85,7 +86,7 @@ const OwnerRouter = [
   },
   {
     path: "/restaurant/:id/dish/edit/:dishId",
-    component: <CreateDish />,
+    component: <EditDish />,
   },
 ];
 

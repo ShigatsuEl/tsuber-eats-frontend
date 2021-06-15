@@ -6,6 +6,8 @@ import { HelmetProvider } from "react-helmet-async";
 import { useHistory, useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Dish } from "../../components/dish";
+import { DishOption } from "../../components/dish-option";
+import { DishOptionChoice } from "../../components/dish-option-choice";
 import Loading from "../../components/loading";
 import { Victory } from "../../components/victory";
 import {
@@ -134,7 +136,25 @@ export const OwnerRestaurant = () => {
                         price={dish.price}
                         description={dish.description}
                         restaurantId={data.getOwnerRestaurant.restaurant?.id}
-                      />
+                      >
+                        {dish.options?.map((option, index) => (
+                          <DishOption
+                            key={index}
+                            index={index}
+                            option={option}
+                            dish={dish}
+                          >
+                            {option.choices &&
+                              option.choices.map((choice, index) => (
+                                <DishOptionChoice
+                                  key={index}
+                                  name={choice.name}
+                                  extra={choice.extra}
+                                />
+                              ))}
+                          </DishOption>
+                        ))}
+                      </Dish>
                     )
                   )}
                 </div>

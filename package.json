@@ -77,8 +77,5 @@
       "./src/pages/**/*.tsx",
       "./src/routers/**/*.tsx"
     ]
-  },
-  "devDependencies": {
-    "@types/google.maps": "^3.45.2"
   }
 }

@@ -80,8 +80,5 @@
   },
   "devDependencies": {
     "@types/google.maps": "^3.45.2"
-  },
-  "engines": {
-    "node": "12.18.0"
   }
 }

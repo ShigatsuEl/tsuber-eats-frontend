@@ -15,7 +15,6 @@ import {
 import {
   GetOwnerRestaurantQuery,
   GetOwnerRestaurantQueryVariables,
-  GetOwnerRestaurantQuery_getOwnerRestaurant_restaurant_menu,
 } from "../../__generated__/GetOwnerRestaurantQuery";
 import { GET_OWNER_RESTAURANT_QUERY } from "./owner-restaurant";
 
@@ -97,10 +96,9 @@ export const EditDish = () => {
       },
     ],
   });
-  console.log(dish);
+
   const onValid = () => {
     const { name, price, description, ...rest } = getValues();
-    console.log(rest);
     const optionObject = options.map((option) => ({
       name: rest[`${option.id}-option-name`],
       extra: +rest[`${option.id}-option-extra`],
@@ -109,15 +107,15 @@ export const EditDish = () => {
         extra: +rest[`${subOption}-option-choice-extra`],
       })),
     }));
-    const dishOptionObject = dish!.options?.map((dishOption, index) => ({
-      name: rest[`${index}-option-name`],
-      extra: +rest[`${index}-option-extra`],
-      choices: dishOption!.choices?.map((_, subIndex) => ({
-        name: rest[`${index}-${subIndex}-option-choice-name`],
-        extra: +rest[`${index}-${subIndex}-option-choice-extra`],
+    const dishOptionObject = dish!.options?.map((dishOption) => ({
+      name: rest[`${dishOption.id}-option-name`],
+      extra: +rest[`${dishOption.id}-option-extra`],
+      choices: dishOption!.choices?.map((choice) => ({
+        name: rest[`${choice.id}-option-choice-name`],
+        extra: +rest[`${choice.id}-option-choice-extra`],
       })),
     }));
-    /* editDish({
+    editDish({
       variables: {
         input: {
           dishId: +dishId,
@@ -128,7 +126,7 @@ export const EditDish = () => {
         },
       },
     });
-    history.goBack(); */
+    history.goBack();
   };
 
   const onAddDishOptionClick = () => {
@@ -136,17 +134,35 @@ export const EditDish = () => {
   };
 
   const onAddSubOptionClick = (id: number | string) => {
-    setOptions((current) =>
-      current.map((option) => {
-        if (option.id === id) {
-          return {
-            id: option.id,
-            subOptions: [Date.now(), ...option.subOptions],
-          };
-        }
-        return option;
-      })
-    );
+    if (typeof id === "number" && id.toString().length === 13) {
+      setOptions((current) =>
+        current.map((option) => {
+          if (option.id === id) {
+            return {
+              id: option.id,
+              subOptions: [Date.now(), ...option.subOptions],
+            };
+          }
+          return option;
+        })
+      );
+    } else {
+      setDish((current) => ({
+        ...current!,
+        options: current!.options!.map((option) => {
+          if (option.id === id) {
+            return {
+              ...option,
+              choices: [
+                { __typename: "DishChoice", name: "", extra: 0, id: uuidv4() },
+                ...option.choices!,
+              ],
+            };
+          }
+          return option;
+        }),
+      }));
+    }
   };
 
   const onRemoveOptionClick = (
@@ -215,7 +231,7 @@ export const EditDish = () => {
         options: current!.options!.map((option) => ({
           ...option!,
           choices: option.choices!.filter(
-            (choice) => choice.name !== choiceName
+            (choice) => choice.id !== subIdxToDelete
           ),
         })),
       }));
@@ -232,14 +248,18 @@ export const EditDish = () => {
       );
       result = {
         ...findData!,
-        options: findData!.options!.map((option) => ({
-          ...option,
-          id: uuidv4(),
-          choices: option.choices!.map((choice) => ({
-            ...choice,
+        options:
+          findData?.options! &&
+          findData!.options!.map((option) => ({
+            ...option,
             id: uuidv4(),
+            choices:
+              option.choices! &&
+              option.choices!.map((choice) => ({
+                ...choice,
+                id: uuidv4(),
+              })),
           })),
-        })),
       };
       setDish(result);
     }
@@ -275,18 +295,18 @@ export const EditDish = () => {
         className="grid gap-3 mt-5 mb-3 w-full max-w-screen-sm"
       >
         <input
-          {...register("name", { required: "Name is required" })}
+          {...register("name")}
           className="input mb-3"
           type="text"
           name="name"
           placeholder="Name"
+          required
         />
         {formState.errors?.name?.message && (
           <FormError errorMessage={formState.errors.name.message} />
         )}
         <input
           {...register("price", {
-            required: "Price is required",
             min: 0,
           })}
           className="input mb-3"
@@ -294,18 +314,18 @@ export const EditDish = () => {
           min={0}
           name="price"
           placeholder="Price"
+          required
         />
         {formState.errors?.price?.message && (
           <FormError errorMessage={formState.errors.price.message} />
         )}
         <input
-          {...register("description", {
-            required: "Description is required",
-          })}
+          {...register("description")}
           className="input mb-3"
           type="text"
           name="description"
           placeholder="Description"
+          required
         />
         {formState.errors?.description?.message && (
           <FormError errorMessage={formState.errors.description.message} />
@@ -411,7 +431,9 @@ export const EditDish = () => {
               </div>
               <div className="flex justify-end mb-2">
                 <span
-                  onClick={() => onAddSubOptionClick(dishOption.id)}
+                  onClick={() => {
+                    onAddSubOptionClick(dishOption.id);
+                  }}
                   className="btn"
                 >
                   Add Sub Option

@@ -185,7 +185,7 @@ export const Order = () => {
               )}
               {data?.getOrder.order?.status === OrderStatus.PickedUp && (
                 <button
-                  onClick={() => onOwnerBtnClick(OrderStatus.Delevered)}
+                  onClick={() => onOwnerBtnClick(OrderStatus.Delivered)}
                   className="btn"
                 >
                   Delivered
@@ -193,7 +193,7 @@ export const Order = () => {
               )}
             </>
           )}
-          {data?.getOrder.order?.status === OrderStatus.Delevered && (
+          {data?.getOrder.order?.status === OrderStatus.Delivered && (
             <span className=" text-center text-2xl text-lime-600">
               Thank you for using Tsuber Eats
             </span>

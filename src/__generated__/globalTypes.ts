@@ -10,7 +10,7 @@
 export enum OrderStatus {
   Cooked = "Cooked",
   Cooking = "Cooking",
-  Delevered = "Delevered",
+  Delivered = "Delivered",
   Pending = "Pending",
   PickedUp = "PickedUp",
 }

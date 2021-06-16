@@ -45,7 +45,8 @@
   },
   "scripts": {
     "start": "npm run apollo:codegen & npm run tailwind:build & cross-env BROWSER='chrome' react-scripts start",
-    "build": "react-scripts build",
+    "prebuild": "npm run tailwind:build",
+    "build": "CI=false react-scripts build",
     "test": "react-scripts test --verbose",
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "eject": "react-scripts eject",
@@ -79,5 +80,8 @@
   },
   "devDependencies": {
     "@types/google.maps": "^3.45.2"
+  },
+  "engines": {
+    "node": "12.18.3"
   }
 }

@@ -10,6 +10,7 @@ import {
   TakeOrderMutation,
   TakeOrderMutationVariables,
 } from "../../__generated__/TakeOrderMutation";
+import { Helmet } from "react-helmet-async";
 
 const COOKED_ORDERS_SUBSCRIPTION = gql`
   subscription OnCookedOrders {
@@ -149,6 +150,9 @@ export const Dashboard = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>Dashboard | Tsuber Eats</title>
+      </Helmet>
       <div className="w-full overflow-hidden" style={{ height: "50vh" }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyCd6qBYXKaEb7TNIKZyWooyY-teIR4ozsA" }}

@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
-import { HelmetProvider } from "react-helmet-async";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { RestaurantContainer } from "../../components/restaurant-container";
 import { RESTAURANT_FRAGMENT } from "../../fragments";
@@ -27,9 +27,9 @@ export const OwnerRestaurants = () => {
 
   return (
     <div>
-      <HelmetProvider>
+      <Helmet>
         <title>My Restaurants | Tsuber Eats</title>
-      </HelmetProvider>
+      </Helmet>
       <div className="mx-10">
         <h2 className="mb-5 font-semibold text-3xl">My Restaurants</h2>
         <Link to="/restaurant/create">

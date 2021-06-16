@@ -2,7 +2,7 @@
 import { useQuery, useSubscription } from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useEffect } from "react";
-import { HelmetProvider } from "react-helmet-async";
+import { Helmet } from "react-helmet-async";
 import { useHistory, useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Dish } from "../../components/dish";
@@ -85,11 +85,11 @@ export const OwnerRestaurant = () => {
         <Loading />
       ) : (
         <div>
-          <HelmetProvider>
+          <Helmet>
             <title>
               {data?.getOwnerRestaurant.restaurant?.name} | Tsuber Eats
             </title>
-          </HelmetProvider>
+          </Helmet>
           <div
             data-testid="restaurant-coverImg"
             className="relative py-40 px-10 bg-cover bg-center bg-gray-800"
